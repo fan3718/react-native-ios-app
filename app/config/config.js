@@ -1,0 +1,1 @@
+export const server_path = 'https://a.puhuiwealth.com/api'
