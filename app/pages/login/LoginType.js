@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import {
   View,
   ImageBackground,
@@ -10,9 +10,10 @@ import {
   AlertIOS,
 } from 'react-native'
 import { NavigationActions } from 'react-navigation'
-import { unitWidth } from "../../config/AdapterUtil"
 import Icon from 'react-native-vector-icons/FontAwesome'
-import TipPop from '../../components/TipPop'
+
+import { unitWidth } from '../../config/AdapterUtil'
+import { TipPop, ShortLine} from '../../components/index'
 
 const loginMobile = NavigationActions.navigate({
   routeName: 'LoginMobile',
@@ -25,33 +26,31 @@ const userAgree = NavigationActions.navigate({
 })
 
 export default  class LoginType extends Component {
-  static navigationOptions = {
-    header: null,
-    headerBackTitle: "返回",
-  };
+  // static navigationOptions = {
+  //   header: null,
+  //   headerBackTitle: "返回",
+  // };
 
   constructor(props) {
     super(props);
     this.state = { 
       checked: true,
       isError: true,
-      tip: null
+      alert: null
     };
   } 
   
   agree() {
-    if(this.state.checked) {
-      this.setState({ checked: false })
-    }else{
-      this.setState({ checked: true })
-    }
+    this.setState({
+      checked: !this.state.checked,
+    })
   }
   toMoble() {
     if(this.state.checked) {
       this.props.navigation.dispatch(loginMobile)
     }else {
       this.setState({
-        tip: '请先勾选协议'
+        alert: '请先勾选协议'
       })
     }
   }
@@ -60,7 +59,7 @@ export default  class LoginType extends Component {
 
     }else {
       this.setState({
-        tip: '请先勾选协议'
+        alert: '请先勾选协议'
       })
     }
   }
@@ -68,31 +67,36 @@ export default  class LoginType extends Component {
     this.props.navigation.dispatch(userAgree)
   }
   render() {
-    const { login, getVcode } = this.props;
-    let cheked = true;  
     return(
       <View style={styles.container}>
-        <ImageBackground style={styles.backgroundImage} source={require('../../assets/image/loginBg.png')}>
+        <ImageBackground style={styles.backgroundImage} source={require('../../assets/image/login/loginBg.png')}>
         <View style={styles.loginLogo}>
             <Image style={styles.logoImg}
-            source={require('../../assets/image/loginLogo.png')}
+            source={require('../../assets/image/login/loginLogo.png')}
             />
             <Text style={styles.logoBigText}>倡导公众投资价值
             </Text>
-            <Text style={styles.logoSmallText}>专注个人投资 服务中产家庭
-            </Text>
+            <View style={styles.disInline}>
+              <ShortLine width={unitWidth*24}></ShortLine>
+              <Text style={styles.logoSmallText}>专注个人投资 服务中产家庭
+              </Text>
+              <ShortLine width={unitWidth*24}></ShortLine>
+            </View>
         </View>
         <View style={styles.loginModel}>
-          <TouchableOpacity onPress={this.toMoble.bind(this)} style={{marginTop: 50}}>
+          <TouchableOpacity onPress={this.toMoble.bind(this)} style={{marginBottom: unitWidth*50}}>
             <View style={styles.loginBtn}>
               <Icon name="mobile" size={unitWidth*34} color="white"/>
               <Text style={styles.btnText}>使用手机号码登录
               </Text>
             </View>
           </TouchableOpacity>
-          <Text style={styles.welcomeText}>or
-          </Text>
-          <TouchableOpacity onPress={this.toWechat.bind(this)} style={{marginTop: 50}}>
+          <View style={styles.disInline}>
+              <ShortLine width={unitWidth*60}></ShortLine>
+              <Text style={styles.typeOr}>or</Text>
+              <ShortLine width={unitWidth*60}></ShortLine>
+            </View>
+          <TouchableOpacity onPress={this.toWechat.bind(this)} style={{marginTop: unitWidth*50}}>
             <View style={styles.loginBtn}>
               <Icon name="wechat" size={unitWidth*30} color="white"/>
               <Text style={styles.btnText}>使用微信登录
@@ -110,19 +114,17 @@ export default  class LoginType extends Component {
           </View>
         </View>
         </ImageBackground>
-        <TipPop tip={this.state.tip} pState = {this.state}></TipPop>
+        <TipPop navigation = {this.props.navigation}></TipPop>
       </View>
     )
   }
 }
 
 const styles = StyleSheet.create({
-  tipPop: {
-    position: 'absolute',
-    bottom: unitWidth * 100,
-    backgroundColor: 'rgba(255,255,255,0.8)',
-    padding: unitWidth * 15 ,
-    borderRadius: unitWidth * 30
+  disInline: {
+    flexDirection: 'row',
+    alignItems:'center',
+    justifyContent:'center',
   },
   container: {
     flex: 1,
@@ -156,6 +158,13 @@ const styles = StyleSheet.create({
     justifyContent:'center',
     position: 'relative'
   },
+  typeOr: {
+    color: '#ffffff',
+    fontSize: unitWidth * 30,
+    fontFamily:  'PingFang-SC-Medium',
+    marginLeft: unitWidth * 30,
+    marginRight: unitWidth * 30,
+  },
   logoBigText: {
     color: '#ffffff',
     fontSize: unitWidth * 40,
@@ -165,6 +174,8 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontSize: unitWidth * 22,
     fontFamily:  'PingFang-SC-Medium',
+    marginLeft: unitWidth * 10,
+    marginRight: unitWidth * 10,
   },
   btnText:{
     color: '#ffffff',
@@ -181,8 +192,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 44,
     padding: 5,
-    borderColor: '#ffffff',
-    backgroundColor: 'rgba(230,230,230,0.4)'
+    borderColor: 'rgba(230,230,230,0.8)',
+    backgroundColor: 'rgba(230,230,230,0.2)'
   },
   footer: {
     flexDirection: 'row',

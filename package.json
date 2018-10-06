@@ -7,9 +7,15 @@
     "test": "jest"
   },
   "dependencies": {
+    "moment": "^2.22.2",
+    "native-echarts": "^0.4.0",
     "react": "16.4.1",
     "react-native": "0.56.1",
     "react-native-elements": "^0.19.1",
+    "react-native-material-tabs": "^3.7.0",
+    "react-native-scrollable-tab-view": "git+https://github.com/happypancake/react-native-scrollable-tab-view.git",
+    "react-native-swiper": "^1.5.13",
+    "react-native-tab-view": "^1.2.0",
     "react-native-vector-icons": "^5.0.0",
     "react-navigation": "^2.14.2",
     "react-redux": "^5.0.7",

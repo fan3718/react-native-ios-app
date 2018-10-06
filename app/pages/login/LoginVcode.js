@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import {
   View,
   ImageBackground,
@@ -6,32 +6,22 @@ import {
   TextInput,
   StyleSheet,
   TouchableOpacity,
+  AsyncStorage,
 } from 'react-native';
-import { Avatar } from 'react-native-elements';
-import { connect } from 'react-redux'; // 引入connect函数
-import * as loginAction from '../../actions/loginAction';// 导入action方法
-import { StackActions, NavigationActions } from 'react-navigation';
-import { unitWidth } from '../../config/AdapterUtil';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import { connect } from 'react-redux' // 引入connect函数
+import { NavigationActions } from 'react-navigation'
 
-const resetAction = StackActions.reset({
-  index: 0,
-  key: "BottomTabNavigator",
-  actions: [
-    NavigationActions.navigate({routeName: 'App',})
-  ]
-})
+import * as loginAction from '../../actions/LoginAction' // 导入action方法
+import { unitWidth } from '../../config/AdapterUtil'
+import { TipPop, } from '../../components/index'
 
-const homeAction = NavigationActions.navigate({
-  routeName: 'Home',
-  actions: NavigationActions.navigate({routeName: 'Home',})
+const faceReco = NavigationActions.navigate({
+  routeName: 'FaceReco',
+  actions: NavigationActions.navigate({routeName: 'FaceReco',})
 })
 
 class LoginVcode extends Component {
-  static navigationOptions = {
-      // title: 'Login',
-      // header: null,
-  };
+
   constructor(props) {
     super(props);
     this.state = {
@@ -39,6 +29,7 @@ class LoginVcode extends Component {
         vcode2: '',
         vcode3: '',
         vcode4: '',
+        alert: '',
     };
   }
 
@@ -73,16 +64,26 @@ class LoginVcode extends Component {
     this.setState({
         vcode4: vcode,
     },()=>{
-        console.info(this.state)
+        this.props.getToken({
+          mobile: this.props.mobile,
+          vcodeId: this.props.vcodeId,
+          vcode: this.state.vcode1 + this.state.vcode2 +this.state.vcode3 +this.state.vcode4,
+        });
     });
   }
 
+  componentWillReceiveProps(nextProps) {
+    if(nextProps.type === 'GOT_TOKEN') {
+      AsyncStorage.setItem('token', JSON.stringify(global.token),(error, result) =>{})
+      this.props.navigation.dispatch(faceReco)
+    }
+  }
+
   render() {
-    const { login, getVcode } = this.props;
     return(
       <View style={styles.container}>
         <ImageBackground style={styles.backgroundImage}
-        source={require('../../assets/image/loginBg.png')}>
+        source={require('../../assets/image/login/loginBg.png')}>
         <View style={styles.textPos}>
           <View style={styles.yellowDot}></View>
           <Text style={styles.welcomeText}>欢迎,{'\n'}请输入验证码
@@ -94,8 +95,7 @@ class LoginVcode extends Component {
             onChangeText={(vcode) => this.firstInput(vcode)} autoFocus={true}
             value={this.state.vcode1}/>
             <TextInput ref = "code2" style={styles.vcodeInput} maxLength = {1}
-            onChangeText={(vcode) => this.secondInput(vcode)} 
-            autoFocus={this.state.focus2}
+            onChangeText={(vcode) => this.secondInput(vcode)}
             value={this.state.vcode2}/>
             <TextInput ref = "code3" style={styles.vcodeInput} maxLength = {1}
             onChangeText={(vcode) => this.thirdInput(vcode)}
@@ -105,6 +105,7 @@ class LoginVcode extends Component {
             value={this.state.vcode4}/>
         </View>
         </ImageBackground>
+        <TipPop navigation = {this.props.navigation}></TipPop>
       </View>
     )
   }
@@ -181,15 +182,12 @@ const styles = StyleSheet.create({
 
 export default connect(
   (state) => ({
-    isLoading: state.loginIn.isLoading,
-    isError: state.loginIn.isError,
-    token: state.loginIn.token,
+    type: state.loginIn.type,
+    mobile: state.loginIn.mobile,
     vcodeId: state.loginIn.vcodeId,
-    userInfo: state.loginIn.userInfo,
-    alert: state.loginIn.alert,
   }),
   (dispatch) => ({
     login: () => dispatch(loginAction.login()),
-    getVcode: (data) => dispatch(loginAction.getVcode(data)),
+    getToken: (data) => dispatch(loginAction.getToken(data)),
   })
 )(LoginVcode)

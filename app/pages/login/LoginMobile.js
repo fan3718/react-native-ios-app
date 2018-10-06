@@ -1,18 +1,21 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import {
   View,
   ImageBackground,
+  Image,
   Text,
   TextInput,
   StyleSheet,
   TouchableOpacity,
-} from 'react-native';
-import { Avatar } from 'react-native-elements';
-import { connect } from 'react-redux'; // 引入connect函数
-import * as loginAction from '../../actions/loginAction';// 导入action方法
-import { StackActions, NavigationActions } from 'react-navigation';
-import { unitWidth } from '../../config/AdapterUtil';
-import Icon from 'react-native-vector-icons/FontAwesome';
+} from 'react-native'
+
+import { connect } from 'react-redux' // 引入connect函数
+import { StackActions, NavigationActions } from 'react-navigation'
+import Icon from 'react-native-vector-icons/FontAwesome'
+
+import { unitWidth } from '../../config/AdapterUtil'
+import * as loginAction from '../../actions/LoginAction' // 导入action方法
+import { TipPop, } from '../../components/index'
 
 const resetAction = StackActions.reset({
   index: 0,
@@ -22,49 +25,37 @@ const resetAction = StackActions.reset({
   ]
 })
 
-const homeAction = NavigationActions.navigate({
-  routeName: 'Home',
-  actions: NavigationActions.navigate({routeName: 'Home',})
+const vcodeAction = NavigationActions.navigate({
+  routeName: 'LoginVcode',
+  actions: NavigationActions.navigate({routeName: 'LoginVcode',})
 })
 
 class LoginMobile extends Component {
-  static navigationOptions = {
-      // title: 'Login',
-      // header: null,
-  };
   constructor(props) {
     super(props);
     this.state = { 
       Placeholder: '输入手机号码',
-      mobile: '' 
-  };
+      mobile: '',
+    };
   }
-  shouldComponentUpdate(nextProps, nextState) {
-    
-    console.info(this.state)
-    // 登录完成,切成功登录
-    if (nextProps.status === '登陆成功' && nextProps.isSuccess) {
-      this.props.navigation.dispatch(homeAction)
-      this.props.navigation.dispatch(resetAction)
-      return false;
+  componentWillReceiveProps(nextProps) {
+    if(nextProps.vcodeId && nextProps.mobile && nextProps.type === 'GOT_VCODE') {
+      this.props.navigation.dispatch(vcodeAction)
     }
-    return true;
   }
 
-  onChanged (text) {
-    console.info(text)
+  onChanged (mobile) {
     this.setState({
-        mobile: text.replace(/[^0-9]/g, ''),
+        mobile: mobile.replace(/[^0-9]/g, ''),
     });
-    console.info(this.state.mobile)
   }
 
   render() {
-    const { login, getVcode } = this.props;
+    const { alert, getVcode } = this.props;
     return(
       <View style={styles.container}>
         <ImageBackground style={styles.backgroundImage}
-        source={require('../../assets/image/loginBg.png')}>
+        source={require('../../assets/image/login/loginBg.png')}>
         <View style={styles.textPos}>
           <Text style={styles.welcomeText}>欢迎,{'\n'}手机号码登录
           </Text>
@@ -72,11 +63,8 @@ class LoginMobile extends Component {
         <View style={styles.btnPos}>
           <View  style={styles.inputBox}>
             <Text style={styles.areaCode}>+86</Text>
-            <Avatar small rounded
-              source={{uri: "https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg"}}
-              onPress={() => console.log("Works!")}
-              activeOpacity={0.7} ontainerStyle={{width: unitWidth * 40}}
-            />
+            <Image style={styles.flagImg}
+            source={require('../../assets/image/login/china.png')}></Image>
             <TextInput placeholder = {this.state.Placeholder} 
             placeholderTextColor = "white" maxLength = {11} textContentType = "telephoneNumber"
             style={styles.editInput}
@@ -84,7 +72,7 @@ class LoginMobile extends Component {
             value={this.state.mobile}/>
           </View>
           <View style={{width: '100%'}}>
-            <TouchableOpacity onPress={()=>getVcode(this.state.text)} style={{marginTop: 50}}>
+            <TouchableOpacity onPress={()=>getVcode(this.state.mobile)} style={{marginTop: 50}}>
               <View style={styles.loginBtn}>
                 <Icon name="mobile" size={unitWidth*34} color="white"/>
                 <Text style={styles.loginText}>获取验证码
@@ -94,6 +82,7 @@ class LoginMobile extends Component {
           </View> 
         </View>
         </ImageBackground>
+        <TipPop navigation = {this.props.navigation}></TipPop>
       </View>
     )
   }
@@ -149,9 +138,14 @@ const styles = StyleSheet.create({
   },
   areaCode: {
     color: '#ffffff',
-    fontSize: unitWidth * 40,
+    fontSize: unitWidth * 30,
     fontFamily:  'PingFang-SC-Medium',
     paddingRight: unitWidth * 10,
+  },
+  flagImg: {
+    width: unitWidth * 40,
+    height: unitWidth * 40,
+    borderRadius: unitWidth * 20,
   },
   editInput: {
     width: '70%',
@@ -173,8 +167,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: unitWidth * 6,
     padding: 5,
-    borderColor: '#ffffff',
-    backgroundColor: 'rgba(230,230,230,0.4)'
+    borderColor: 'rgba(230,230,230,0.2)',
+    backgroundColor: 'rgba(230,230,230,0.2)'
 
   },
   loginText: {
@@ -187,12 +181,9 @@ const styles = StyleSheet.create({
 
 export default connect(
   (state) => ({
-    isLoading: state.loginIn.isLoading,
-    isError: state.loginIn.isError,
-    token: state.loginIn.token,
+    mobile: state.loginIn.mobile,
     vcodeId: state.loginIn.vcodeId,
-    userInfo: state.loginIn.userInfo,
-    alert: state.loginIn.alert,
+    type: state.loginIn.type,
   }),
   (dispatch) => ({
     login: () => dispatch(loginAction.login()),

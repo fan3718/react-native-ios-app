@@ -2,100 +2,53 @@
 
 import * as types from '../constant'
 import { server_path } from '../config/config'
+import { isLoading, isError, httpRequest } from './HttpAction'
 
 //获取用户协议
 export function getAgreement() {
   return dispatch => {
-    dispatch(isLoading());
-    fetch(server_path + '/login/agreement',{
+    let request = new Request(
+      server_path + '/login/agreement', {
       method: 'GET',
-    }).then((res)=>{
-      let data = JSON.parse(res._bodyInit);
-      if(data['errorCode'] === 0) {
-        dispatch(getAgreementSuccess(data['data']));
-      }else{
-        dispatch(isError(data['msg']));
-      }
-    }).catch((e)=>{
-      dispatch(isError(e));
-    })
+    });
+    dispatch(httpRequest(request,getAgreementSuccess, "1231231"))
   }
 }
+
 //获取手机验证码
 export function getVcode(mobile) {
   return dispatch => {
     
-    let phoneReg = /^1[3|4|5|7|8]\d{9}$/;
+    let phoneReg = /^1[3|4|5|6|7|8]\d{9}$/;
     if(!phoneReg.test(mobile)) {
       dispatch(isError('请正确输入手机号码'));
     }
-      // dispatch(isLoading());
-      // fetch(server_path + '/sendVcode',{
-      //   method: 'POST',
-      //   body: JSON.stringify({
-      //     mobile: mobile,
-      //   })
-      // }).then((res)=>{
-      //   if(res._bodyInit && res._bodyInit.indexOf('errorCode') === -1) {
-      //     dispatch(getVcodeSuccess(user));
-      //   }else{
-      //     dispatch(isError("失败"));
-      //   }
-      // }).catch((e)=>{
-      //   dispatch(isError(e));
-      // })
-  }
-}
-//获取token
-export function getToken() {
-  return dispatch => {
-    dispatch(isLoading());
-      fetch(server_path + '/login/vcode',{
+    let request = new Request(
+      server_path + '/sendVcode', {
         method: 'POST',
         body: JSON.stringify({
-          mobile: '',
-          vcode: '',
-          vcodeid: '',
-          type: 0,//app 0;小程序 1
+          mobile: mobile,
         })
-      }).then((res)=>{
-        console.info(res);
-        if(res._bodyInit && res._bodyInit.indexOf('errorCode') === -1) {
-          dispatch(getTokenSuccess(res));
-        }else{
-          dispatch(isError("失败"));
-        }
-      }).catch((e)=>{
-        dispatch(isError(e));
-      })
-  }
-}
-//获取用户信息
-export function getUserInfo() {
-  return dispatch => {
-    dispatch(isLoading());
-      // 用户登录
-      fetch(server_path + '/user/info',{
-        method: 'GET',
-        hearders: {
-          token: ''
-        }
-      }).then((res)=>{
-        console.info(res);
-        if(res._bodyInit && res._bodyInit.indexOf('errorCode') === -1) {
-          dispatch(loginSuccess(res));
-        }else{
-          dispatch(isError('失败'));
-        }
-      }).catch((e)=>{
-        dispatch(isError(e));
-      })
+    });
+    dispatch(httpRequest(request,getVcodeSuccess, mobile));
   }
 }
 
-function isLoading() {
-  return {
-    type: types.IS_LOADING
+//获取token
+export function getToken(params) {
+  console.info(params)
+  return dispatch => {
+    let request = new Request(
+      server_path + '/login/vcode',{
+      method: 'POST',
+      body: JSON.stringify({
+        mobile: params.mobile,
+        vcode: params.vcode,
+        vcodeid: params.vcodeId,
+        type: 0,//app 0;小程序 1
+      })
+    });
+    dispatch(httpRequest(request,getTokenSuccess));
   }
 }
 
@@ -106,31 +59,18 @@ function getAgreementSuccess(agreement) {
   }
 }
 
-function getVcodeSuccess(vcodeId) {
+function getVcodeSuccess(data,...key) {
   return {
-    type: types.LOGIN_IN_DONE,
-    vcodeId: vcodeId,
+    type: types.GOT_VCODE,
+    vcodeId: data["vcodeid"],
+    mobile: key[0],
   }
 }
 
-function getTokenSuccess(token) {
+function getTokenSuccess(data) {
+  global.token = data["token"];
   return {
-    type: types.LOGIN_IN_DONE,
-    token: token,
+    type: types.GOT_TOKEN,
   }
 }
 
-
-function loginSuccess(user) {
-  return {
-    type: types.LOGIN_IN_DONE,
-    user: user,
-  }
-}
-
-function isError(alert) {
-  return {
-    type: types.IS_ERROR,
-    alert: alert,
-  }
-}

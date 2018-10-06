@@ -1,18 +1,20 @@
 import { createSwitchNavigator } from 'react-navigation'
 import LoginType from '../pages/login/LoginType'
 import RootStack from '../navset/StrakNav'
-import LoginVcode from "../pages/login/LoginVcode"
+import UserAgree from "../pages/login/UserAgree"
+import ProductDetail from "../pages/product/ProductDetail"
+import MyOrder from "../pages/room/MyOrder"
 
 const SwitchNav = createSwitchNavigator({
-    LoginVcode:LoginVcode,
+    // MyOrder:  MyOrder,
     App: RootStack
 },{
-    initialRouteName: 'LoginVcode',
+    initialRouteName: 'App',
     navigationOptions: ({navigation}) => ({
         title: navigation.state.routeName,
         
         headerStyle: {
-            backgroundColor: '#f4511e',
+            backgroundColor: 'rgb(168,147,75)',
         },
         headerTintColor: '#fff',
         headerTitleStyle: {

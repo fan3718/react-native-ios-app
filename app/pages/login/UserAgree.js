@@ -1,22 +1,15 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import {
-  View,
-  Text,
-  StyleSheet,
-  StatusBar,
   WebView
 } from 'react-native'
-
-import { connect } from 'react-redux'; // 引入connect函数
-import * as loginAction from '../../actions/loginAction';// 导入action方法
+import { connect } from 'react-redux' // 引入connect函数
 import { NavigationActions } from 'react-navigation'
-import { unitWidth } from "../../config/AdapterUtil"
 
+import * as loginAction from '../../actions/LoginAction' // 导入action方法
 
-
-const login = NavigationActions.navigate({
-  routeName: 'Login',
-  actions: NavigationActions.navigate({routeName: 'Login',})
+const typeAction = NavigationActions.navigate({
+  routeName: 'LoginType',
+  actions: NavigationActions.navigate({routeName: 'LoginType',})
 })
 
 class UserAgree extends Component {
@@ -29,8 +22,9 @@ class UserAgree extends Component {
     super(props);
     const { getAgreement } = props;
     getAgreement();
+    this.props.navigation.goBack('LoginType')
   }
-  
+
   render() { 
      
     return(
@@ -42,21 +36,9 @@ class UserAgree extends Component {
     )
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  welcomeText:{
-    color: '#000'
-  },
-})
 export default connect(
     (state) => ({
-        apiType: state.loginIn.apiType,
-        agreement: state.loginIn.agreement,
+      agreement: state.loginIn.agreement,
     }),
     (dispatch) => ({
       getAgreement: () => dispatch(loginAction.getAgreement()),

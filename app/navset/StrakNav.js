@@ -1,13 +1,14 @@
 import {createStackNavigator} from 'react-navigation'
 
-import LoginType from '../pages/login/LoginType'
-import UserAgree from "../pages/login/UserAgree"
-import LoginMobile from "../pages/login/LoginMobile"
-import LoginVcode from "../pages/login/LoginVcode"
-
-import SettingsPage from "../pages/SettingsPage"
-import SettingsPage2 from "../pages/SettingsPage2"
 import BottomTabNavigator from "./TabNav"
+import {
+    LoginType, UserAgree, LoginMobile, LoginVcode, FaceReco, RecoSuccess,
+    NewsDetail, RiskReveal, ProductDetail, ProductOrder, OrderSuccess,
+    MyOrder, OrderDetail, FeedBack,
+    
+    SettingsPage, 
+    SettingsPage2,
+} from './../pages/index'
 const RootStack = createStackNavigator({
     BottomTabNavigator: {
         screen: BottomTabNavigator,
@@ -16,11 +17,24 @@ const RootStack = createStackNavigator({
         }
     },
     LoginType: LoginType,
+    UserAgree: UserAgree,
     LoginMobile: LoginMobile,
     LoginVcode: LoginVcode,
-    UserAgree: {
-        screen: UserAgree,
-    },
+    FaceReco: FaceReco,
+    RecoSuccess: RecoSuccess,
+
+    NewsDetail: NewsDetail,
+    ProductDetail: ProductDetail,
+    ProductOrder: ProductOrder,
+    OrderSuccess: OrderSuccess,
+    RiskReveal: RiskReveal,
+    MyOrder: MyOrder,
+    OrderDetail: OrderDetail,
+    FeedBack: FeedBack,
+
+
+
+
     Settings: {
         screen: SettingsPage
     },
@@ -31,10 +45,11 @@ const RootStack = createStackNavigator({
     /* 主屏幕的标题配置现在在这里 */
     //headerMode: 'none',
     navigationOptions: ({navigation}) => ({
+        header: null,
         title: navigation.state.routeName,
         
         headerStyle: {
-            backgroundColor: '#f4511e',
+            backgroundColor: 'rgb(168,147,75)',
         },
         headerTintColor: '#fff',
         headerTitleStyle: {

@@ -1,12 +1,25 @@
 'use strict'
 
-/* Android env dosen't support Symbol, no idea about the reason */
-// import Enum from 'es6-enum'
-export const IS_LOADING = 'IS_LOADING';
-export const IS_ERROR = 'IS_LOADING';
+export const IS_LOADING = 'IS_LOADING'
+export const IS_ERROR = 'IS_ERROR'
+export const IS_SUCCESS = 'IS_SUCCESS'
 //登陆页面状态
+export const GOT_AGREEMENT = 'GOT_AGREEMENT'
+export const GOT_VCODE = 'GOT_VCODE'
+export const GOT_TOKEN = 'GOT_TOKEN'
+//资讯页面
+export const GOT_NEWSLIST = 'GOT_NEWSLIST'
+export const GOT_NEWSDETAIL = 'GOT_NEWSDETAIL'
+//产品/服务页面
+export const GOT_PRODUCTCATE = 'GOT_PRODUCTCATE'
+export const GOT_PRODUCTSLIST = 'GOT_PRODUCTSLIST'
+export const GOT_PRODUCTSDETAIL = 'GOT_PRODUCTSDETAIL'
+export const GOT_PRODUCTSACCOUT = 'GOT_PRODUCTSACCOUT'
+export const SUBMIT_PRODUCTSORDER = 'SUBMIT_PRODUCTSORDER'
+//顾问室页面
+export const GOT_USERINFO = 'GOT_USERINFO'
+export const GOT_ORDERLIST = 'GOT_ORDERLIST'
+export const GOT_ORDERDETAIL = 'GOT_ORDERDETAIL'
+export const ACCEPT_ORDER = 'ACCEPT_ORDER'
+export const SEND_FEEDBACK = 'SEND_FEEDBACK'
 
-export const GOT_AGREEMENT = 'GOT_AGREEMENT';
-export const GOT_VCODE = 'GOT_VCODE';
-export const GOT_TOKEN = 'GOT_TOKEN';
-export const LOGIN_IN_DONE = 'LOGIN_IN_DONE';

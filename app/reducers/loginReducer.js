@@ -2,50 +2,32 @@
 import * as types from '../constant';
 
 const initialState = {
-  apiType: null,
-  isLoading: false,
+  type: null,
   userInfo: null,
-  token: null,
   vcodeId: null,
-  alert: null,
   agreement: {},
+  mobile: null,
 }
 
 export default function loginIn(state=initialState, action) {
   switch (action.type) {
-    case types.IS_LOADING:
-      return {
-        ...state,
-        isLoading: true,
-      }
     case types.GOT_AGREEMENT:
-    console.info(action)
       return {
         ...state,
         agreement: action.agreement,
+        type: 'GOT_AGREEMENT',
       }
     case types.GOT_VCODE:
       return {
         ...state,
+        mobile: action.mobile,
         vcodeId: action.vcodeId,
+        type: 'GOT_VCODE',
       }
     case types.GOT_TOKEN:
       return {
         ...state,
-        token: action.token,
-      }
-    case types.LOGIN_IN_DONE:
-      return {
-        ...state,
-        isLoading: false,
-        userInfo: action.user,
-      }
-    case types.IS_ERROR:
-      return {
-        ...state,
-        isLoading: false,
-        isError: true,
-        alert: action.alert,
+        type: 'GOT_TOKEN',
       }
     default:
     // console.log(state);

@@ -1,10 +1,11 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import {
   View,
   Text,
   StyleSheet,
-} from 'react-native';
-import { NavigationActions } from 'react-navigation';
+} from 'react-native'
+import { NavigationActions } from 'react-navigation'
+
 const modelAction = NavigationActions.navigate({
   routeName: 'LoginType',
   actions: NavigationActions.navigate({routeName: 'LoginType',})
@@ -14,7 +15,6 @@ export default class HomePage extends Component {
 
   constructor (props) {
     super(props)
-    this.props.navigation.dispatch(modelAction)
   }
 
   render() {

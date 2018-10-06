@@ -1,46 +1,65 @@
+import React, { Component } from 'react';
+import {
+  Image,
+} from 'react-native'
 import {createBottomTabNavigator} from 'react-navigation'
-
-import HomePage from "../pages/HomePage"
-import DetailsPage from "../pages/DetailsPage"
+import { unitWidth } from "./../config/AdapterUtil"
+import RoomPage from "../pages/homeTab/RoomPage"
+import NewsPage from "../pages/homeTab/NewsPage"
+import ServicePage from "../pages/homeTab/ServicePage"
 
 const BottomTabNavigator = createBottomTabNavigator({
-    Home: {
-        screen: HomePage,
+    Service: {
+        screen: ServicePage,
         navigationOptions: {
-            tabBarLabel: '首页',//显示的标签文字
+            tabBarLabel: '服务',//显示的标签文字
             //显示的图片
-            // tabBarIcon: ({tintColor}) => (
-            //     <Image
-            //         // source={require('./images/ic_home.png')}
-            //         style={[{height: 24, width: 24}, {tintColor: tintColor}]}
-            //     />
-            // ),
+            tabBarIcon: ({tintColor}) => (
+                <Image
+                    source={require('./../assets/image/tab/ic_service.png')}
+                    style={[{height: 24, width: 24}, {tintColor: tintColor}]}
+                />
+            ),
         },
     },
-    Details: {
-        screen: DetailsPage,
+    News: {
+        screen: NewsPage,
         navigationOptions: {
-            tabBarLabel: '详情',//显示的标签文字
+            tabBarLabel: '资讯',//显示的标签文字
             //显示的图片
-            // tabBarIcon: ({tintColor}) => (
-            //     <Image
-            //         // source={require('./images/ic_home.png')}
-            //         style={[{height: 24, width: 24}, {tintColor: tintColor}]}
-            //     />
-            // ),
+            tabBarIcon: ({tintColor}) => (
+                <Image
+                    source={require('./../assets/image/tab/ic_news.png')}
+                    style={[{height: 24, width: 24}, {tintColor: tintColor}]}
+                />
+            ),
         },
     },
-
+    Room: {
+        screen: RoomPage,
+        navigationOptions: {
+            tabBarLabel: '工作室',//显示的标签文字
+            //显示的图片
+            tabBarIcon: ({tintColor}) => (
+                <Image
+                    source={require('./../assets/image/tab/ic_room.png')}
+                    style={[{height: 24, width: 24}, {tintColor: tintColor}]}
+                />
+            ),
+        },
+    },
 }, {
     navigationOptions: ({navigation}) => ({
         tabBarIcon: ({focused, tintColor}) => {
             const {routeName} = navigation.state;
             let iconName;
-            if (routeName === 'Home') {
-                iconName = `ios-home${focused ? '' : '-outline'}`;
-            } else if (routeName === 'Details') {
-                iconName = `ios-options${focused ? '' : '-outline'}`;
-            }
+            // if (routeName === 'Service') {
+            //     iconName = `ios-home${focused ? '' : '-outline'}`;
+            // } else if (routeName === 'News') {
+            //     iconName = `ios-options${focused ? '' : '-outline'}`;
+            // } else if (routeName === 'Wealth') {
+            //     iconName = `ios-options${focused ? '' : '-outline'}`;
+            // }
 
             // 在此处可以返回任何组件！
             // 我们通常使用react-native-vector-icons中的图标组件
@@ -48,13 +67,14 @@ const BottomTabNavigator = createBottomTabNavigator({
         },
     }),
     tabBarOptions: {
-        activeTintColor: 'tomato',
-        inactiveTintColor: 'gray',
+        activeTintColor: '#b6a878',
+        inactiveTintColor: '#cccccc',
         labelStyle: {
-            fontSize: 16,
+            fontSize: unitWidth * 22,
+            fontFamily:  'PingFang-SC-Regular',
         },
         style: {
-            backgroundColor: 'green',
+            backgroundColor: 'white',
         },
     },
     // animationEnabled: true,
@@ -64,7 +84,7 @@ const BottomTabNavigator = createBottomTabNavigator({
     // //切换是否有动画
     // animationEnabled: true,
     //进入App的首页面
-    initialRouteName: 'Home',
+    initialRouteName: 'Room',
 });
 
 export default BottomTabNavigator
