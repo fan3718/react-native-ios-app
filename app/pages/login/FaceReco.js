@@ -6,33 +6,56 @@ import {
   Image,
   StyleSheet,
   TouchableOpacity,
+  Animated,
 } from 'react-native'
 import { connect } from 'react-redux' // 引入connect函数
-import { NavigationActions } from 'react-navigation'
 
 import * as loginAction from '../../actions/LoginAction' // 导入action方法
-import { unitWidth } from '../../config/AdapterUtil'
-
-const successAction = NavigationActions.navigate({
-  routeName: 'RecoSuccess',
-  actions: NavigationActions.navigate({routeName: 'RecoSuccess',})
-})
+import { unitWidth, width } from '../../config/AdapterUtil'
 
 class FaceReco extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      right: new Animated.Value(-width),
+    }
   }
 
+  componentWillReceiveProps(nextProps) {
+    if(nextProps.status === 'FaceReco' && this.state.right._value == -width) {
+      this.toShow()
+    }
+  }
 
   jump() {
-    this.props.navigation.dispatch(successAction)
+    // this.props.navigation.navigate('RecoSuccess')
+    this.toHide();
+    this.props.nextStatus('RecoSuccess')
+  }
+
+  toHide() {
+      Animated.timing(this.state.right,
+          {
+            toValue: width, 
+            duration: 500,
+          }
+      ).start();
+  }
+
+  toShow() {
+      Animated.timing(this.state.right,
+          {
+            toValue: 0,
+            duration: 500,
+          }
+      ).start();
   }
 
   render() {
     return(
-      <View style={styles.container}>
-        <ImageBackground style={styles.backgroundImage}
-        source={require('../../assets/image/login/loginBg.png')}>
+      <Animated.View style={[styles.container,{
+        right:this.state.right,//将动画对象赋值给需要改变的样式属性
+      }]}>
         <View style={styles.textPos}>
           <View style={styles.yellowDot}></View>
           <Text style={styles.welcomeText}>成功,{'\n'}录入您的面部信息
@@ -40,7 +63,10 @@ class FaceReco extends Component {
           <Text style={styles.tipText}>为了您的账户安全，{'\n'}请进行面部信息录入</Text>
         </View>
         <View style={styles.facePos}>
-            <Image style={styles.faceImg} source={require('../../assets/image/login/loginLogo.png')}/>
+            <ImageBackground style={styles.faceBox} source={require('../../assets/image/login/faceFrame.png')}>
+              <Image style={styles.faceImg} source={require('../../assets/image/login/loginLogo.png')}/>
+              <Text style={[styles.jumpTip,styles.faceTip]}>拿起手机，眨眨眼</Text>
+            </ImageBackground>
             <View style={styles.jumpPos}>
                 <Text style={styles.jumpTip}>暂不录入，</Text>
                 <View style={styles.jumpbtn}>
@@ -49,8 +75,7 @@ class FaceReco extends Component {
             </View>
             
         </View>
-        </ImageBackground>
-      </View>
+      </Animated.View>
     )
   }
 }
@@ -60,6 +85,10 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    right: -width,
   },
   backgroundImage:{
     flex:1,
@@ -75,15 +104,16 @@ const styles = StyleSheet.create({
   },
   textPos: {
     flex: 1,
-    alignItems:'flex-start',
-    justifyContent:'flex-end',
+    // alignItems:'flex-start',
+    // justifyContent:'flex-end',
     position: 'relative',
+    paddingTop: unitWidth * 200,
     width: unitWidth * 620,
   },
   yellowDot: {
     position: 'absolute',
-    bottom: '10%',
-    left: '54%',
+    bottom: unitWidth * 200,
+    left: unitWidth * 450,
     width: unitWidth * 46,
     height: unitWidth * 46,
     borderRadius: unitWidth * 46,
@@ -105,11 +135,29 @@ const styles = StyleSheet.create({
     justifyContent:'flex-start',
     position: 'relative',
     width: unitWidth * 620,
-    paddingTop: '20%'
+  },
+  faceBox: {
+    width: '110%',
+    height: '100%',
+    marginTop: - unitWidth * 220,
+    marginLeft: '-10%',
+    alignItems:'center',
+    justifyContent:'center',
+    position: 'relative',
+    paddingTop: unitWidth * 80,
+    paddingLeft: unitWidth * 30,
   },
   faceImg: {
-    width: '80%',
-    height: '80%',
+    width: unitWidth * 400,
+    height: unitWidth * 400,
+    borderWidth: unitWidth * 2,
+    borderColor: '#ffffff',
+    borderRadius: unitWidth * 200,
+  },
+  faceTip: {
+    position: 'absolute',
+    bottom: unitWidth * 90,
+    paddingLeft: unitWidth * 40,
   },
   jumpPos: {
     flexDirection: 'row',

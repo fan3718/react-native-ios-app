@@ -2,15 +2,14 @@
 
 import * as types from '../constant'
 import { server_path } from '../config/config'
-import { isLoading, isError, httpRequest } from './HttpAction'
+import { isLoading, isError, httpRequest, combindParams } from './HttpAction'
 
 //获取产品类别
-export function getProductsCate(params) {
+export function getProductsCate() {
     return dispatch => {
       let request = new Request(
         server_path + '/product/list', {
-        method: 'GET',
-        headers: ({'Token': params}),
+        headers: ({'Token': global.token}),
       });
       dispatch(httpRequest(request,getProductsCateSuccess));
     }
@@ -20,14 +19,8 @@ export function getProductsCate(params) {
 export function getProductsList(params) {
   return dispatch => {
     let request = new Request(
-      server_path + '/product/list', {
-      method: 'GET',
-      headers: ({'Token': params.token}),
-      data: JSON.stringify({
-        page: params.page, // [可选] 当前页
-        limit: params.limit, // [可选] 每页条数
-        categoryId: params.id, // [可选] 分类id
-      }),
+      combindParams(server_path + '/product/list',params), {
+      headers: ({'Token': global.token}),
     });
     dispatch(httpRequest(request,getProductsListSuccess));
   }
@@ -36,12 +29,8 @@ export function getProductsList(params) {
 export function getProductsDetail(params) {
   return dispatch => {
     let request = new Request(
-      server_path + '/product/detail', {
-      method: 'GET',
-      headers: ({'Token': params.token}),
-      data: JSON.stringify({
-        id: params.id,
-      }),
+      combindParams(server_path + '/product/detail',params), {
+      headers: ({'Token': global.token}),
     });
     dispatch(httpRequest(request,getProductsDetailSuccess));
   }
@@ -50,29 +39,21 @@ export function getProductsDetail(params) {
 export function getProductsAccount(params) {
   return dispatch => {
     let request = new Request(
-      server_path + '/product/account', {
-      method: 'GET',
-      headers: ({'Token': params.token}),
-      data: JSON.stringify({
-        id: params.id,
-      }),
+      combindParams(server_path + '/product/account',params), {
+      headers: ({'Token': global.token}),
     });
     dispatch(httpRequest(request,getProductsAccountSuccess));
   }
 }
-
-//产品募集账号
+//提交预约
 export function submitProductOrder(params) {
   return dispatch => {
     let request = new Request(
       server_path + '/product/order', {
       method: 'POST',
-      headers: ({'Token': params.token}),
-      data: JSON.stringify({
-        productId: params.id, // 产品id
-        reservationAmount: params.amount, // 预约购买金额
-        reservationDate: params.date, // 预约时间
-        memo: params.memo, // 备注
+      headers: ({'Token': global.token}),
+      body: JSON.stringify({
+        ...params
       }),
     });
     dispatch(httpRequest(request,submitProductOrderSuccess));

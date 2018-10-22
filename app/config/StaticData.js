@@ -304,47 +304,40 @@ export const CURRENCY = {
     10: '新西兰元',
     11: '日元',
 }
-//产品详情
-export const PRODUCT = {
-    id: 1, // 产品id
-    name: '深蓝启明11号证券投资基金', // 产品名称
-    no: 'PHCFTZ000003', // 内部产品编号
-    categoryId: 3,  // 产品分类id
-    categoryName: '海外类',  // 产品分类名称
-    status: 2, // 0：预热中；1：募集中；2：募集结束；--1：无状态；
-    minAmount: 100.00, // 起投金额，单位 万元
-    currency: 1, // 币种 1：元；2：美元；3：欧元；4：英镑；5：港币；6：瑞士法郎；7：加拿大元；8：澳大利亚元；9：新加坡元；10：新西兰元；11：日元；
-    term: '12个月', // 期限
-    annualReturn: '6.5%-7.8%', // 年化收益基准
-    seq: 1, // 产品排序
-    netValue: 1.3300, // 净值
-    riskLevel: 1, // 产品风险等级
-    riskValue: 24, // 客户风险类型
-    riskName: '进取型,激进型 ', // 风险类型名称
-    riskyIcon: 'R2', // 风险等级
-    termType: 1, // 期限类型 1表示 固定到期日  2表示固定期限  3表示周期性回款
-    productLight: '', // 产品亮点
-    introduction: '<h3>产品要素</h3><p> </p', // 产品介绍
-    productReview: '新余市极吉投资中心（有限合伙）', // 产品点评
-    productAnnouncement: '', // 产品公告
-    productMarketingCopy: '民生品清二号FOF证券投资基金', // 产品营销文案
-    riskInformation: '<div>风险揭示</div><div>（一）特殊风险揭示</div>', // 风险提示信息
-    maxAmount: 1000000.00, // 最大认购金额范围
-    rateRange: '[{"minAmount":100000,"maxAmount":1000000,"rate":1}]', // 收益率区间
-    limits: '投资范围', // 投资范围
-    scale: '产品费用', // 产品费用
-    productSize: '产品规模', // 产品规模
-    custodian: '招商银行', // 基金托管人
-    fundManager: '基金管理人', // 基金管理人
-    netWorth: { // 产品净值，购买后才会有
-        date: '2017-07-16', // 日期
-        value: 1121.3 // 净值
-    },
-    attachment: [{ // 产品附件
-        name: '丰穗2号指导价', // 文件名称
-        url: '1513052400351__1512985804656__丰穗2号指导价.pdf', // 附件地址
-        type: 2, // 附件类型 0：img；1：txt；2：pdf；3：video；99：others
-        videoTranscoded: 0, // 视频是否转码
-        createTime: '2017-11-20 11:33:36' // 创建时间
-    }]
+//提醒类型
+export const REMIND_TYPE = {
+    object: { 1: '日常沟通', 2: '投资意向', 3: '其他', },
+    array: [{ id: 1, name: '日常沟通'},{id: 2, name: '投资意向'},{id: 3, name: '其他'},]
+}
+//提醒等级
+export const REMIND_SEQ = {
+    object: { 1: '十分重要', 2: '重要', 3: '一般',},
+    array: [{ id: 1, name: '十分重要'},{id: 2, name: '重要'},{id: 3, name: '一般' },]
+}
+//性别
+export const GENDER = {
+    object: { 1: '女士', 2: '男士', },
+    array: [{ id: 1, name: '女士'},{id: 2, name: '男士'},]
+}
+//客户来源
+export const REMIND_SOURCE = {
+    object: { 1:'员工推荐',  2:'老客户推荐',  3:'市场活动', 4:'电话销售', 5:'内部员工',  6:'销售人员自有资源', 7:'老客户续投',  8:'后台录入', 9: '其他销售方式'},
+    array: [{ id: 1, name: '员工推荐'},{id: 2, name: '老客户推荐'},{id: 3, name: '市场活动' },
+    { id: 4, name: '电话销售'},{id: 5, name: '内部员工'},{id: 6, name: '销售人员自有资源' },
+    { id: 7, name: '老客户续投'},{id: 8, name: '后台录入'},{id: 9, name: '其他销售方式' },]
+}
+//联系时间
+export const CONTACT_TIME = {
+    object: { 1: '工作日上班时间', 2: '工作日非上班时间18：00--22:00', 3: '节假日10:00--18:00', },
+    array: [{ id: 1, name: '工作日上班时间'},{id: 2, name: '工作日非上班时间18：00--22:00'},{ id: 3, name: '节假日10:00--18:00'},]
+}
+//客户意向
+export const INTENTION = {
+    object: { 1: '非常有意向', 2: '较有意向', 3: '一般需继续了解', 4: '可能性较小或尚未明确情况', 5: '可能性极小或不可能',},
+    array: [{ id: 1, name: '非常有意向'},{id: 2, name: '较有意向'},{ id: 3, name: '一般需继续了解'},{id: 4, name: '可能性较小或尚未明确情况'},{id: 5, name: '可能性极小或不可能'},]
+}
+//证件类型
+export const CERTIFICATE_TYPE = {
+    object: { 1: '身份证', 2: '军官证', 3: '签证', },
+    array: [{ id: 1, name: '身份证'},{id: 2, name: '军官证'},{ id: 3, name: '签证'},]
 }

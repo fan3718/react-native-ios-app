@@ -6,29 +6,15 @@ import {
   Text,
   TextInput,
   StyleSheet,
+  Animated,
   TouchableOpacity,
 } from 'react-native'
-
 import { connect } from 'react-redux' // 引入connect函数
-import { StackActions, NavigationActions } from 'react-navigation'
 import Icon from 'react-native-vector-icons/FontAwesome'
 
-import { unitWidth } from '../../config/AdapterUtil'
+import { unitWidth, width } from '../../config/AdapterUtil'
 import * as loginAction from '../../actions/LoginAction' // 导入action方法
 import { TipPop, } from '../../components/index'
-
-const resetAction = StackActions.reset({
-  index: 0,
-  key: "BottomTabNavigator",
-  actions: [
-    NavigationActions.navigate({routeName: 'App',})
-  ]
-})
-
-const vcodeAction = NavigationActions.navigate({
-  routeName: 'LoginVcode',
-  actions: NavigationActions.navigate({routeName: 'LoginVcode',})
-})
 
 class LoginMobile extends Component {
   constructor(props) {
@@ -36,11 +22,19 @@ class LoginMobile extends Component {
     this.state = { 
       Placeholder: '输入手机号码',
       mobile: '',
+      right: new Animated.Value(-width),
     };
   }
   componentWillReceiveProps(nextProps) {
     if(nextProps.vcodeId && nextProps.mobile && nextProps.type === 'GOT_VCODE') {
-      this.props.navigation.dispatch(vcodeAction)
+      this.refs.input.blur()
+      this.toHide()
+      this.props.changeType()
+      this.props.nextStatus('LoginVcode')
+    }
+    if(nextProps.status === 'LoginMobile' && this.state.right._value == -width) {
+      this.refs.input.focus();
+      this.toShow()
     }
   }
 
@@ -50,13 +44,32 @@ class LoginMobile extends Component {
     });
   }
 
+  toHide() {
+      Animated.timing(this.state.right,
+          {
+            toValue: width, 
+            duration: 500,
+          }
+      ).start();
+  }
+
+  toShow() {
+      Animated.timing(this.state.right,
+          {
+            toValue: 0,
+            duration: 500,
+          }
+      ).start();
+  }
+
   render() {
-    const { alert, getVcode } = this.props;
+    const { getVcode } = this.props;
     return(
-      <View style={styles.container}>
-        <ImageBackground style={styles.backgroundImage}
-        source={require('../../assets/image/login/loginBg.png')}>
+      <Animated.View  style={[styles.container,{
+        right:this.state.right,//将动画对象赋值给需要改变的样式属性
+      }]}>
         <View style={styles.textPos}>
+          <View style={styles.yellowDot}></View>
           <Text style={styles.welcomeText}>欢迎,{'\n'}手机号码登录
           </Text>
         </View>
@@ -65,14 +78,18 @@ class LoginMobile extends Component {
             <Text style={styles.areaCode}>+86</Text>
             <Image style={styles.flagImg}
             source={require('../../assets/image/login/china.png')}></Image>
-            <TextInput placeholder = {this.state.Placeholder} 
+            <TextInput ref= 'input' placeholder = {this.state.Placeholder}
             placeholderTextColor = "white" maxLength = {11} textContentType = "telephoneNumber"
             style={styles.editInput}
             onChangeText={(mobile) => this.onChanged(mobile)}
             value={this.state.mobile}/>
           </View>
           <View style={{width: '100%'}}>
-            <TouchableOpacity onPress={()=>getVcode(this.state.mobile)} style={{marginTop: 50}}>
+            <TouchableOpacity onPress={()=>{
+              getVcode(this.state.mobile)
+              // this.toHide()
+              // this.props.nextStatus('LoginVcode')
+            }} style={{marginTop: 50}}>
               <View style={styles.loginBtn}>
                 <Icon name="mobile" size={unitWidth*34} color="white"/>
                 <Text style={styles.loginText}>获取验证码
@@ -81,9 +98,7 @@ class LoginMobile extends Component {
             </TouchableOpacity>
           </View> 
         </View>
-        </ImageBackground>
-        <TipPop navigation = {this.props.navigation}></TipPop>
-      </View>
+      </Animated.View>
     )
   }
 }
@@ -93,6 +108,10 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    right: -width,
   },
   backgroundImage:{
     flex:1,
@@ -107,11 +126,21 @@ const styles = StyleSheet.create({
     backgroundColor:'rgba(0,0,0,0)',
   },
   textPos: {
-    flex: 2,
+    flex: 1,
     alignItems:'flex-start',
-    justifyContent:'flex-end',
+    // justifyContent:'flex-end',
     position: 'relative',
+    paddingTop: unitWidth * 200,
     width: unitWidth * 620,
+  },
+  yellowDot: {
+    position: 'absolute',
+    bottom: unitWidth * 180,
+    left: unitWidth * 330,
+    width: unitWidth * 46,
+    height: unitWidth * 46,
+    borderRadius: unitWidth * 46,
+    backgroundColor: 'rgb(254,216,131)'
   },
   welcomeText: {
     color: '#ffffff',
@@ -120,12 +149,12 @@ const styles = StyleSheet.create({
   },
 
   btnPos: {
-    flex: 5,
-    alignItems:'center',
+    flex: 2,
+    // alignItems:'center',
     // justifyContent:'center',
     position: 'relative',
     width: unitWidth * 620,
-    paddingTop: '20%'
+    paddingTop: '10%'
   },
   inputBox: {
     flexDirection: 'row',
@@ -188,5 +217,6 @@ export default connect(
   (dispatch) => ({
     login: () => dispatch(loginAction.login()),
     getVcode: (data) => dispatch(loginAction.getVcode(data)),
+    changeType: () => dispatch(loginAction.changeType()),
   })
 )(LoginMobile)

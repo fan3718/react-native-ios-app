@@ -6,14 +6,8 @@ import {
     TouchableOpacity,
     StyleSheet
  } from 'react-native'
-import { NavigationActions } from 'react-navigation'
 
 import { unitWidth } from './../config/AdapterUtil'
-
-const detailAction = NavigationActions.navigate({
-    routeName: 'NewsDetail',
-    actions: NavigationActions.navigate({ routeName: 'NewsDetail', })
-})
 
 export default class NewsCard extends Component {
   constructor(props) {
@@ -22,14 +16,14 @@ export default class NewsCard extends Component {
 
   toDetail(item) {
     // this.props.props.navigation.dispatch(detailAction);
-    // this.props.props.navigation.navigate("NewsDetail",{id:item.id});
+    this.props.props.navigation.navigate("NewsDetail",{id:item.id});
   }
 
   render() { 
     const { item } = this.props
     return(
         <View style = {styles.cardBox}>
-            <TouchableOpacity onPress={this.toDetail.bind(this,item)}>
+            <TouchableOpacity onPress={this.toDetail.bind(this,item)} activeOpacity={0.8}>
                 <View style = {styles.cardHeader}>
                     <Text st
                     yle = {styles.headerTitle}>{item.author} | {item.createTime}</Text>
@@ -66,6 +60,8 @@ const styles = StyleSheet.create({
     },
     cardBody: {
         flexDirection: 'row',
+        // alignItems: 'center',
+        // justifyContent: 'center',
     },
     bodyLeft: {
         width: '68%',
@@ -80,5 +76,6 @@ const styles = StyleSheet.create({
     },
     cardImg: {
         width: '26%',
+        resizeMode: 'contain',
     },
 });

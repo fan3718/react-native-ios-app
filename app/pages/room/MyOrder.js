@@ -1,76 +1,105 @@
 import React, { Component } from 'react'
 import {
   View,
-  Text,
   StyleSheet,
-  AsyncStorage,
 } from 'react-native'
-import { NavigationActions } from 'react-navigation'
-import ScrollableTabView, {DefaultTabBar,ScrollableTabBar} from 'react-native-scrollable-tab-view'
+import ScrollableTabView from 'react-native-scrollable-tab-view'
 import { connect } from 'react-redux' // 引入connect函数
 
 import { unitWidth } from '../../config/AdapterUtil'
 import * as orderAction from '../../actions/OrderAction' // 导入action方法
 import { TipPop, Header, OrderCard, TabBar} from '../../components/index'
 
-const backAction = NavigationActions.navigate({
-    routeName: 'Room',
-    actions: NavigationActions.navigate({routeName: 'Room',})
-})
-
 class MyOrder extends Component {
-    //待受理2 已确认5  已拒绝1
+    //status=1（已拒绝）status=2（待受理） status=4（已确认）
     constructor (props) {
         super(props)
         this.state = {
-            status: 2, // 状态 待受理2 已确认5  已拒绝1
-            page: 1, // [可选] 当前页
-            limit: 20, // [可选] 每页条数
-            token: global.token,
-            orderList: [{
-                id: 1, // 预约单id
-                no: 'PHCFTZ0000461807160001', // 预约单号
-                productName: '深蓝启明11号证券投资基金', // 产品名称
-                customerName: '王毅', // 客户姓名
-                status: 2, // 预约状态 待受理2 已确认5  已拒绝1
-                reservationAmount: 100, // 预约购买额度
-                reservationDate: '2017-07-27', // 预约购买日期
-                rejectReason: '临时外出', // 反馈信息
-            },{
-                id: 2, // 预约单id
-                no: 'PHCFTZ0000461807160001', // 预约单号
-                productName: '深蓝启明11号证券投资基金', // 产品名称
-                customerName: '王毅', // 客户姓名
-                status: 5, // 预约状态 待受理2 已确认5  已拒绝1
-                reservationAmount: 100, // 预约购买额度
-                reservationDate: '2017-07-27', // 预约购买日期
-                rejectReason: '临时外出', // 反馈信息
-            },{
-                id: 3, // 预约单id
-                no: 'PHCFTZ0000461807160001', // 预约单号
-                productName: '深蓝启明11号证券投资基金', // 产品名称
-                customerName: '王毅', // 客户姓名
-                status: 1, // 预约状态 待受理2 已确认5  已拒绝1
-                reservationAmount: 100, // 预约购买额度
-                reservationDate: '2017-07-27', // 预约购买日期
-                rejectReason: '临时外出', // 反馈信息
-            }]
+            page: {2:0,4:0,1:0},//第几页
+            totalPage: {},//共几条
+            limit: 20,//每页获取条数
+            statusIds:[2,4,1],
+            activeTab: 0,
+            orderList: {
+                2:[
+                    // {
+                    //     id: 1, // 预约单id
+                    //     no: 'PHCFTZ0000461807160001', // 预约单号
+                    //     productName: '深蓝启明11号证券投资基金', // 产品名称
+                    //     customerName: '王毅', // 客户姓名
+                    //     status: 2, // 预约状态 待受理2 已确认5  已拒绝1
+                    //     reservationAmount: 100, // 预约购买额度
+                    //     reservationDate: '2017-07-27', // 预约购买日期
+                    //     rejectReason: '临时外出', // 反馈信息
+                    // }
+                ],
+                4:[
+                    // {
+                    //     id: 1, // 预约单id
+                    //     no: 'PHCFTZ0000461807160001', // 预约单号
+                    //     productName: '深蓝启明11号证券投资基金', // 产品名称
+                    //     customerName: '王毅', // 客户姓名
+                    //     status: 4, // 预约状态 待受理2 已确认5  已拒绝1
+                    //     reservationAmount: 100, // 预约购买额度
+                    //     reservationDate: '2017-07-27', // 预约购买日期
+                    //     rejectReason: '临时外出', // 反馈信息
+                    // }
+                ],
+                1:[
+                    // {
+                    //     id: 1, // 预约单id
+                    //     no: 'PHCFTZ0000461807160001', // 预约单号
+                    //     productName: '深蓝启明11号证券投资基金', // 产品名称
+                    //     customerName: '王毅', // 客户姓名
+                    //     status: 1, // 预约状态 待受理2 已确认5  已拒绝1
+                    //     reservationAmount: 100, // 预约购买额度
+                    //     reservationDate: '2017-07-27', // 预约购买日期
+                    //     rejectReason: '临时外出', // 反馈信息
+                    // }
+                ]
+            }
+        }
+        this.getOrders(2)
+    }
+    componentWillReceiveProps(nextProps) {
+        if(nextProps.orderList && nextProps.type === 'GOT_ORDERLIST') {
+            let status = this.state.statusIds[this.state.activeTab]
+            let page = nextProps.orderList.page
+            console.info(page)
+            this.setState({
+                page: {
+                    ...this.state.page,
+                    [status]: page.page,
+                },
+                totalPage: {
+                    ...this.state.totalPage,
+                    [status]: page.totalPage,
+                },
+                orderList: {
+                    ...this.state.orderList,
+                    [status]: this.state.orderList[status].concat(nextProps.orderList.list),
+                }
+            })
         }
     }
 
     goBack() {
-        this.props.navigation.dispatch(backAction)
+        this.props.navigation.navigate('Room')
     }
 
-    getOrders() {
+    getOrders(status) {
         this.props.getOrderList({
-            status: this.state.status, // 状态 待受理2 已确认5  已拒绝1
-            page: this.state.page, // [可选] 当前页
+            status: status, // 状态 待受理2 已确认4  已拒绝1
+            page: this.state.page[status] + 1, // [可选] 当前页
             limit: this.state.limit, // [可选] 每页条数
-            token: this.state.token
         })
     }
 
+    scrollEnd(status) {
+        if(this.state.totalPage[status] > this.state.page[status]) {
+            this.getOrders(status)
+        }
+    }
 
     render() {
 
@@ -78,7 +107,16 @@ class MyOrder extends Component {
         <View style={styles.container}>
             <Header hasBack={true} title= {'我的预约'} back={this.goBack.bind(this)} props = {this.props.navigation} />
             <ScrollableTabView onChangeTab={(obj) => {
-            //    this.props.changeTab(obj.i)
+                this.setState({
+                    activeTab: obj.i
+                },()=> {
+                    let status = this.state.statusIds[obj.i]
+                    console.info(this.state.totalPage)
+                    if(!this.state.totalPage[status] && this.state.totalPage[status] !== 0) {
+                        this.getOrders(status)
+                    }
+                })
+                
               } 
             } initialPage= {0}
             tabBarUnderlineStyle = {styles.tabLine}   
@@ -87,13 +125,13 @@ class MyOrder extends Component {
                 <TabBar/>
             }>   
                 <View tabLabel="待受理">
-                    <OrderCard list = {this.state.orderList} navigation ={this.props.navigation}/>
+                    <OrderCard list = {this.state.orderList[2]} onEnd = {this.scrollEnd.bind(this,2)} navigation ={this.props.navigation}/>
                 </View>
                 <View tabLabel="已确认">
-                    <OrderCard list = {this.state.orderList} navigation ={this.props.navigation} />
+                    <OrderCard list = {this.state.orderList[4]} onEnd = {this.scrollEnd.bind(this,4)} navigation ={this.props.navigation} />
                 </View>
                 <View tabLabel="待沟通">
-                    <OrderCard list = {this.state.orderList} navigation ={this.props.navigation} />
+                    <OrderCard list = {this.state.orderList[1]} onEnd = {this.scrollEnd.bind(this,1)} navigation ={this.props.navigation} />
                 </View>
             </ScrollableTabView>
             <TipPop navigation = {this.props.navigation}></TipPop>

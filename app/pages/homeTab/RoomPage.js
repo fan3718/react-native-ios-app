@@ -4,14 +4,12 @@ import {
   Text,
   Image,
   StyleSheet,
-  AsyncStorage,
   ScrollView,
   TouchableOpacity,
   ImageBackground,
   Dimensions,
 } from 'react-native'
 import { connect } from 'react-redux' // 引入connect函数
-import { NavigationActions } from 'react-navigation'
 import Icon from 'react-native-vector-icons/Feather'
 
 import { unitWidth } from '../../config/AdapterUtil'
@@ -24,26 +22,28 @@ class RoomPage extends Component {
         this.state = {
             isOpen: false,
         }
-        // AsyncStorage.setItem('token', JSON.stringify('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE1Mzg1NDg2NDYsImV4cCI6MTUzODcyMTQ0NiwidHlwZSI6MCwiaWQiOiIzIiwiZW50SWQiOiIyNSJ9.Z1TEnmVZ640hEMYdiaa8uwXt7C8uhl13v6bDYIap6lQ'),(error, result) =>{})
-        AsyncStorage.getItem('token')
-            .then((value) => {
-                let jsonValue = JSON.parse((value));
-                global.token = jsonValue
-                // console.info(jsonValue)
-                this.props.getUserInfo(global.token)
-            })
-        // console.info(this.props)
-    }
-
-    componentWillReceiveProps(nextProps) {
-        console.info(nextProps)
-        if(nextProps.userInfo && nextProps.type === 'GOT_USERINFO') {
-            console.info(nextProps)
-        }
+        this.props.getUserInfo()
+        this.props.getAdvisorTarget()
     }
 
     toOrderList() {
         this.props.navigation.navigate("MyOrder");
+    }
+
+    toJobCalendars() {
+        this.props.navigation.navigate("JobCalendars");
+    }
+
+    toServiceCharge() {
+        this.props.navigation.navigate("ServiceCharge");
+    }
+
+    toCustomerList() {
+        this.props.navigation.navigate("CustomerList");
+    }
+    
+    toPerfrom() {
+        this.props.navigation.navigate("ChildrenPerform");
     }
 
     seeAmount() {
@@ -51,9 +51,9 @@ class RoomPage extends Component {
             isOpen: !this.state.isOpen,
         })
     }
-
+    
     render() {
-        let  { userInfo } = this.props
+        let  { userInfo, target } = this.props
         return(
         <View style={styles.container}>
               <ImageBackground style={styles.topBg} source={require('./../../assets/image/room/ellipse.png')}>
@@ -78,19 +78,19 @@ class RoomPage extends Component {
                             </TouchableOpacity>
                         </View>
                         <View style={[styles.tabBox,styles.rightBorder]}>
-                            <TouchableOpacity style={styles.tabBtn} onPress={this.toOrderList.bind(this)}>
+                            <TouchableOpacity style={styles.tabBtn} onPress={this.toJobCalendars.bind(this)}>
                                 <Image style={styles.tabIcon} source={require('../../assets/image/room/calendar.png')}/>
                                 <Text style={styles.tabText}>工作台历</Text>
                             </TouchableOpacity>
                         </View>
                         <View style={[styles.tabBox,styles.rightBorder]}>
-                            <TouchableOpacity style={styles.tabBtn} onPress={this.toOrderList.bind(this)}>
+                            <TouchableOpacity style={styles.tabBtn} onPress={this.toCustomerList.bind(this)}>
                                 <Image style={styles.tabIcon} source={require('../../assets/image/room/customer.png')}/>
                                 <Text style={styles.tabText}>客户管理</Text>
                             </TouchableOpacity>
                         </View>
                         <View style={styles.tabBox}>
-                            <TouchableOpacity style={styles.tabBtn} onPress={this.toOrderList.bind(this)}>
+                            <TouchableOpacity style={styles.tabBtn} onPress={this.toPerfrom.bind(this)}>
                                 <Image style={styles.tabIcon} source={require('../../assets/image/room/trend.png')}/>
                                 <Text style={styles.tabText}>子公司业绩</Text>
                             </TouchableOpacity>
@@ -104,17 +104,19 @@ class RoomPage extends Component {
                       <Text style={styles.sectionRightText}>500万</Text>
                     </View>
                     <View style={styles.sectionContent}>
-                        <SaleChart/>
+                        <SaleChart data= {target}/>
                     </View>
                 </View>
                 <View style={styles.section}>
                     <View style={styles.sectionTitle}>
                       <Text style={styles.sectionText}>服务费</Text>
-                      <Icon name="chevron-right" size={unitWidth*55} color="#cccccc"/>
+                      <TouchableOpacity onPress={this.toServiceCharge.bind(this)}>
+                        <Icon name="chevron-right" size={unitWidth*55} color="#cccccc"/>    
+                      </TouchableOpacity>
                     </View>
                     <View style={styles.sectionContent}>
                         <View style={styles.sectionTop}>
-                            <Text style={styles.amountText}>{this.state.isOpen? 22000.00 : '****'}</Text>
+                            <Text style={styles.amountText}>{this.state.isOpen? target['commission'] : '****'}</Text>
                             <Text style={styles.syeImgBox} onPress = {this.seeAmount.bind(this)}>
                                 {
                                     this.state.isOpen? <Image style={styles.eyeImg}
@@ -282,8 +284,15 @@ export default connect(
     (state) => ({
       type: state.roomReducer.type,
       userInfo: state.roomReducer.userInfo,
+      target: state.roomReducer.target || {
+            target: 12.3, // 目标金额
+            order: 13, // 预约金额
+            sign: 10, // 签约金额
+            commission: 2000 // 服务费
+        }
     }),
     (dispatch) => ({
-      getUserInfo: (data) => dispatch(roomAction.getUserInfo(data)),
+        getUserInfo: (data) => dispatch(roomAction.getUserInfo(data)),
+        getAdvisorTarget: (data) => dispatch(roomAction.getAdvisorTarget(data)),
     })
 )(RoomPage)

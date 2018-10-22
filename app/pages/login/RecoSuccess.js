@@ -6,45 +6,67 @@ import {
   Image,
   StyleSheet,
   TouchableOpacity,
+  Animated,
 } from 'react-native'
 import { connect } from 'react-redux' // 引入connect函数
-import { StackActions, NavigationActions } from 'react-navigation'
 
 import * as loginAction from '../../actions/LoginAction' // 导入action方法
-import { unitWidth } from '../../config/AdapterUtil'
-
-const resetAction = StackActions.reset({
-  index: 0,
-  key: "BottomTabNavigator",
-  actions: [
-    NavigationActions.navigate({routeName: 'App',})
-  ]
-})
-
-const newsAction = NavigationActions.navigate({
-  routeName: 'News',
-  actions: NavigationActions.navigate({routeName: 'News',})
-})
+import { unitWidth, width } from '../../config/AdapterUtil'
 
 class RecoSuccess extends Component {
-  static navigationOptions = {
-      // title: 'Login',
-      // header: null,
-  };
   constructor(props) {
     super(props);
+    this.state = {
+      right: new Animated.Value(-width),
+      num: 5,
+    }
+  }
+  time
+  componentWillReceiveProps(nextProps) {
+    if(nextProps.status === 'RecoSuccess' && this.state.right._value == -width) {
+      this.toShow()
+       this.time= setInterval(()=>{
+        this.setState({
+          num: this.state.num - 1
+        },() => {
+          if(this.state.num === 0) {
+            clearInterval(this.time)
+            this.toHome()
+          }
+        })
+      },1000);
+    }
   }
 
   toHome() {
-    this.props.navigation.dispatch(newsAction)
+    clearInterval(this.time)
+    this.props.navigation.navigate('BottomTabNavigator')
+  }
+
+  toHide() {
+      Animated.timing(this.state.right,
+          {
+            toValue: width, 
+            duration: 500,
+          }
+      ).start();
+  }
+
+  toShow() {
+      Animated.timing(this.state.right,
+          {
+            toValue: 0,
+            duration: 500,
+          }
+      ).start();
   }
 
   render() {
     const { login, getVcode } = this.props;
     return(
-      <View style={styles.container}>
-        <ImageBackground style={styles.backgroundImage}
-        source={require('../../assets/image/login/loginBg.png')}>
+      <Animated.View style={[styles.container,{
+        right:this.state.right,//将动画对象赋值给需要改变的样式属性
+      }]}>
         <View style={styles.textPos}>
           <View style={styles.yellowDot}></View>
           <Text style={styles.welcomeText}>恭喜,{'\n'}面部信息录入成功
@@ -54,14 +76,16 @@ class RecoSuccess extends Component {
         <View style={styles.facePos}>
             <Image style={styles.faceImg} source={require('../../assets/image/login/registerSuccess.png')}/>
             <TouchableOpacity onPress={this.toHome.bind(this)}  style={styles.btnImg}>
-              <Image source={require('../../assets/image/login/welcomeBtn.png')}/>            
+              <Image source={require('../../assets/image/login/welcomeBtn.png')}/>
+              <Text style={[styles.jumpTip,styles.timeAccount]}>（{this.state.num}）</Text>   
             </TouchableOpacity>
             <View style={styles.jumpPos}>
-                <Text style={styles.jumpTip}>投资有风险，理财需谨慎</Text>
+              <Image style={styles.lineImg} source={require('../../assets/image/login/leftLine.png')}/>
+              <Text style={styles.jumpTip}>投资有风险，理财需谨慎</Text>
+              <Image style={styles.lineImg} source={require('../../assets/image/login/rightLine.png')}/>
             </View>
         </View>
-        </ImageBackground>
-      </View>
+      </Animated.View>
     )
   }
 }
@@ -71,6 +95,10 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    right: -width,
   },
   backgroundImage:{
     flex:1,
@@ -86,15 +114,16 @@ const styles = StyleSheet.create({
   },
   textPos: {
     flex: 1,
-    alignItems:'flex-start',
-    justifyContent:'flex-end',
+    // alignItems:'flex-start',
+    // justifyContent:'flex-start',
     position: 'relative',
     width: unitWidth * 620,
+    paddingTop: unitWidth * 200,
   },
   yellowDot: {
     position: 'absolute',
-    bottom: '10%',
-    left: '54%',
+    bottom: unitWidth * 200,
+    left: unitWidth * 450,
     width: unitWidth * 46,
     height: unitWidth * 46,
     borderRadius: unitWidth * 46,
@@ -116,14 +145,21 @@ const styles = StyleSheet.create({
     justifyContent:'flex-start',
     position: 'relative',
     width: unitWidth * 620,
-    paddingTop: '10%'
+    // paddingTop: '10%'
   },
   faceImg: {
     // width: '100%',
     // height: '100%',
   },
   btnImg: {
-    marginTop: '40%',
+    marginTop: '20%',
+    position: 'relative',
+  },
+  timeAccount: {
+    position: 'absolute',
+    left: '52%',
+    top: '45%',
+    color: '#f9f9f9',
   },
   jumpPos: {
     flexDirection: 'row',
@@ -133,9 +169,15 @@ const styles = StyleSheet.create({
     bottom: unitWidth * 40,
   },
   jumpTip: {
-    color: '#ffffff',
+    color: '#808080',
     fontSize: unitWidth * 24,
     fontFamily:  'PingFang-SC-Medium',
+    marginLeft: unitWidth * 20,
+    marginRight: unitWidth * 20,
+  },
+  lineImg: {
+    width: unitWidth * 140,
+    resizeMode: 'contain',
   },
   jumpbtn: {
     borderColor: '#ffffff',

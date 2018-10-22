@@ -26,7 +26,7 @@ export default class OrderCard extends Component {
         let icon = null
         switch(item.status) {//待受理2 已确认5  已拒绝1
             case 2: icon = require('../../assets/image/order/accept.png');break;
-            case 5: icon = require('../../assets/image/order/confirm.png');break;
+            case 4: icon = require('../../assets/image/order/confirm.png');break;
             case 1: icon = require('../../assets/image/order/refuse.png');break;
             default: break;
         }
@@ -62,7 +62,7 @@ export default class OrderCard extends Component {
         const { list } = this.props
         return(
             <View style={styles.container}>
-                <FlatList data = { list } keyExtractor={this._keyExtractor}
+                <FlatList data = { list } keyExtractor={this._keyExtractor} onScroll={() => this.props.onEnd()}
                     renderItem = {this.renderCardItem }/>
             </View>
         )

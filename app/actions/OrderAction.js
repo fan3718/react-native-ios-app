@@ -2,20 +2,14 @@
 
 import * as types from '../constant'
 import { server_path } from '../config/config'
-import { isLoading, isError, httpRequest } from './HttpAction'
+import { isLoading, isError, httpRequest, combindParams } from './HttpAction'
 
 //获取预约列表
 export function getOrderList(params) {
     return dispatch => {
         let request = new Request(
-            server_path + '/order/list', {
-            method: 'POST',
-            headers: ({'Token': params.token}),
-            body: JSON.stringify({
-                status: params.status, // 状态 待受理2 已确认5  已拒绝1
-                page: params.page, // [可选] 当前页
-                limit: params.limit, // [可选] 每页条数
-            })
+            combindParams(server_path + '/order/list',params), {
+            headers: ({'Token': global.token}),
         });
         dispatch(httpRequest(request, getOrderListSuccess));
     }
@@ -24,12 +18,9 @@ export function getOrderList(params) {
 export function getOrderDetail(params) {
     return dispatch => {
         let request = new Request(
-            server_path + '/order/detail', {
+            combindParams(server_path + '/order/detail',params), {
             method: 'POST',
-            headers: ({'Token': params.token}),
-            body: JSON.stringify({
-                id: params.id,
-            })
+            headers: ({'Token': global.token}),
         });
         dispatch(httpRequest(request, getOrderDetailSuccess));
     }
@@ -40,7 +31,7 @@ export function acceptOrder(params) {
         let request = new Request(
             server_path + '/order/accept', {
             method: 'POST',
-            headers: ({'Token': params.token}),
+            headers: ({'Token': global.token}),
             body: JSON.stringify({
                 id: params.id,
             })
@@ -54,7 +45,7 @@ export function sendFeedback(params) {
         let request = new Request(
             server_path + '/order/accept', {
             method: 'POST',
-            headers: ({'Token': params.token}),
+            headers: ({'Token': global.token}),
             body: JSON.stringify({
                 id: params.id,
                 rejectReason: params.feedBack,// 反馈内容

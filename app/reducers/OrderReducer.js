@@ -9,11 +9,11 @@ const initialState = {
 
 export default function orderReducer(state=initialState, action) {
   switch (action.type) {
-    case types.GOT_USERINFO:
+    case types.GOT_ORDERLIST:
       return {
         ...state,
         orderList: action.orderList,
-        type: 'GOT_USERINFO',
+        type: 'GOT_ORDERLIST',
       }
     case types.GOT_ORDERDETAIL:
       return {

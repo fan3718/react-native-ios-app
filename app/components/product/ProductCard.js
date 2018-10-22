@@ -4,80 +4,83 @@ import {
     Text, 
     Image,
     TouchableOpacity,
-    StyleSheet
- } from 'react-native'
- import Icon from 'react-native-vector-icons/Entypo'
- import { NavigationActions } from 'react-navigation'
+    StyleSheet,
+    FlatList,
+    AsyncStorage
+} from 'react-native'
+import Icon from 'react-native-vector-icons/Entypo'
+import { NavigationActions } from 'react-navigation'
+import { connect } from 'react-redux' // 引入connect函数
 
 import { unitWidth } from '../../config/AdapterUtil'
 import { PRODUCT_STATUS, CURRENCY } from '../../config/StaticData'
+import * as poductAction from '../../actions/ProductAction' // 导入action方法
 
-
-const detailAction = NavigationActions.navigate({
-    routeName: 'NewsDetail',
-    actions: NavigationActions.navigate({ routeName: 'NewsDetail', })
-})
-
-const riskAction = NavigationActions.navigate({
-    routeName: 'RiskReveal',
-    actions: NavigationActions.navigate({ routeName: 'RiskReveal', })
-})
-
-export default class ProductCard extends Component {
+class ProductCard extends Component {
   constructor(props) {
     super(props)
   }
 
   toDetail(item) {
-    this.props.props.navigation.dispatch(riskAction);
-    // this.props.props.navigation.navigate("NewsDetail",{id:item.id});
+    AsyncStorage.getItem('kownRisk')
+    .then((value) => {
+        if(!value) {
+            this.props.navigation.navigate('RiskReveal',{id:item.id});
+        }else{
+            this.props.navigation.navigate("ProductDetail",{id:item.id});
+        }
+    })
   }
 
-
-  render() { 
-    const { item } = this.props
-    return(
-        <View style = {styles.cardBox}>
-            <TouchableOpacity onPress={this.toDetail.bind(this,item)}>
-                <View style = {styles.cardHeader}>
-                    <View style = {styles.cardHeaderLeft}>
-                        <Text style = {styles.headerTitle}>{item.name}</Text>
-                        <View style = {[styles.cardTag, styles.cardTagone]}>
-                            <Text style = {styles.TagStatusOne}>{PRODUCT_STATUS[item.status]}</Text>
-                        </View>
-                        {   item.riskyIcon?
-                            <View style = {styles.cardTag}>
-                                <Text style = {styles.TagTitle}>{item.riskyIcon}产品</Text>
-                            </View> : null
-                        } 
+  renderCardItem =({item}) =>{
+    return (
+    <View style = {styles.cardBox}>
+        <TouchableOpacity onPress={this.toDetail.bind(this,item)} activeOpacity={0.8}>
+            <View style = {styles.cardHeader}>
+                <View style = {styles.cardHeaderLeft}>
+                    <Text style = {styles.headerTitle}>{item.name}</Text>
+                    <View style = {[styles.cardTag, styles.cardTagone]}>
+                        <Text style = {styles.TagStatusOne}>{PRODUCT_STATUS[item.status]}</Text>
+                    </View>
+                    {   item.riskyIcon?
                         <View style = {styles.cardTag}>
-                            <Text style = {styles.TagTitle}>R2 产品</Text>
-                        </View>
-                    </View>
-                    <Icon name="chevron-thin-right" size={unitWidth*34} color="rgb(204,204,204)"/>
-                </View>
-                <View style = {styles.cardBody}>
-                    <View style = {styles.contentFirst}>
-                        <Text style = {styles.bigTitle}>{item.minAmount}
-                            <Text style = {styles.unitTitle}>万{CURRENCY[item.currency]}</Text>
-                        </Text>
-                        <Text style = {styles.littleTitle}>起投金额</Text>
-                    </View>
-                    <View style = {styles.contentSecond}>
-                        <Text style = {styles.middleTitile}>{item.term}
-                            <Text style = {styles.unitTitle}>年</Text>
-                        </Text>
-                        <Text style = {styles.littleTitle}>存续期</Text>
-                    </View>
-                    <View style = {styles.contentThird}>
-                        <Text style = {styles.middleTitile}>{item.netValue? item.netValue : '----'}
-                            {/* <Text style = {styles.unitTitle}>万</Text> */}
-                        </Text>
-                        <Text style = {styles.littleTitle}>当前净值</Text>
+                            <Text style = {styles.TagTitle}>{item.riskyIcon}产品</Text>
+                        </View> : null
+                    } 
+                    <View style = {styles.cardTag}>
+                        <Text style = {styles.TagTitle}>R2 产品</Text>
                     </View>
                 </View>
-            </TouchableOpacity>
-        </View>
+                <Icon name="chevron-thin-right" size={unitWidth*34} color="rgb(204,204,204)"/>
+            </View>
+            <View style = {styles.cardBody}>
+                <View style = {styles.contentFirst}>
+                    <Text style = {styles.bigTitle}>{item.minAmount}
+                        <Text style = {styles.unitTitle}>万{CURRENCY[item.currency]}</Text>
+                    </Text>
+                    <Text style = {styles.littleTitle}>起投金额</Text>
+                </View>
+                <View style = {styles.contentSecond}>
+                    <Text style = {styles.middleTitile}>{item.term}
+                        <Text style = {styles.unitTitle}>年</Text>
+                    </Text>
+                    <Text style = {styles.littleTitle}>存续期</Text>
+                </View>
+                <View style = {styles.contentThird}>
+                    <Text style = {styles.middleTitile}>{item.netValue? item.netValue : '----'}
+                        {/* <Text style = {styles.unitTitle}>万</Text> */}
+                    </Text>
+                    <Text style = {styles.littleTitle}>当前净值</Text>
+                </View>
+            </View>
+        </TouchableOpacity>
+    </View>
+    )}
+  render() { 
+    const { products } = this.props
+    return(
+        <FlatList data = { products }  style = { styles.body } keyExtractor={(item, index) => item.id.toString()} 
+        renderItem = {this.renderCardItem} scrollToEnd={() => this.props.onEnd()} />
     )
   }
 }
@@ -183,3 +186,12 @@ const styles = StyleSheet.create({
         width: '26%',
     },
 });
+export default connect(
+    (state) => ({
+      type: state.productsReducer.type,
+      productsList: state.productsReducer.productsList,
+    }),
+    (dispatch) => ({
+        getProductsList: (data) => dispatch(poductAction.getProductsList(data)),
+    })
+)(ProductCard)

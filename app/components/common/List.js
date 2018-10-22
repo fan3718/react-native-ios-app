@@ -9,6 +9,8 @@ import {
  
 import { unitWidth } from '../../config/AdapterUtil'
 import ListItem from './ListItem'
+import Select from './Select'
+
 export default class List extends Component {
     constructor(props) {
         super(props)
@@ -18,13 +20,23 @@ export default class List extends Component {
     }
 
     render() { 
-        const { list, childRender, leftText, rightText } = this.props
+        const { style, list, childRender, leftText, rightText, blur } = this.props
+        let selectType = ['select','datetime','date','region','noyear']
         return(
             <ScrollView>
-                <View style = {styles.container}>
+                <View style = {[styles.container,style]}>
                     {
                         list.map((item,index) => {
-                            return <ListItem item = {item} leftText={leftText} rightText={rightText} index={index} key = {index + item.id}/>
+                            if(item['type'] && selectType.indexOf(item.type) > -1) {
+                                return <Select options = {item}  leftText={leftText} rightText={rightText} onConfirm = {(text) => this.props.editState(text,item['key']) } key = {index.toString()} />
+                            }else if(item['type'] &&  item.type === 'input'){
+                                return <ListItem item = {item}  blur = {blur}  leftText={leftText} rightText={rightText}  onChange={(text)=>
+                                    this.props.editState(text,item['key'])
+                                } key = {index.toString()}/>
+                            }else{
+                                return <ListItem item = {item} leftText={leftText} rightText={rightText}  key = {index.toString()}/>
+                            }
+                            
                         })
                     }
                 </View>
@@ -38,7 +50,7 @@ export default class List extends Component {
 const styles = StyleSheet.create({
     container: {
         borderColor: '#e6e6e6',
-        borderBottomWidth: unitWidth * 2,
+        // borderBottomWidth: unitWidth * 2,
     },
     itemBg: {
         paddingLeft: unitWidth * 35,

@@ -1,12 +1,15 @@
 'use strict'
 
 import { combineReducers } from 'redux'
-import httpRequest from './HttpReducer';
-import loginIn from './LoginReducer';
-import newsReducer from './NewsReducer';
-import productsReducer from './ProductReducer';
-import roomReducer from './RoomReducer';
-import orderReducer from './OrderReducer';
+import httpRequest from './HttpReducer'
+import loginIn from './LoginReducer'
+import newsReducer from './NewsReducer'
+import productsReducer from './ProductReducer'
+import roomReducer from './RoomReducer'
+import orderReducer from './OrderReducer'
+import remindReducer from './RemindReducer'
+import customerReducer from './CustomerReducer'
+import performReducer from './PerformReducer'
 
 const rootReducer = combineReducers({
   httpRequest,
@@ -14,7 +17,10 @@ const rootReducer = combineReducers({
   newsReducer,
   productsReducer,
   roomReducer,
-  orderReducer
+  orderReducer,
+  remindReducer,
+  customerReducer,
+  performReducer,
 })
 
 export default rootReducer

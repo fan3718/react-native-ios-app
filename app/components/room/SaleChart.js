@@ -14,16 +14,17 @@ export default class SaleChart extends Component {
  
   constructor(props) {
       super(props);
-      this.state = {
-        apple:[2, 4, 7, 2, 2, 7, 13, 16],
-        organ: [6, 9, 9, 2, 8, 7, 17, 18],
-      }
   }
-  shouldComponentUpdate(nextprops,nextState) {
-    return false
+  shouldComponentUpdate(nextProps) {
+    if(nextProps.data === this.props.data) {
+        return false
+    }
+    return true
   }
 
   render() {
+      let { data } = this.props
+      let value =  data || {}
     const option = {
         // backgroundColor: '#2c343c',
         // title : {
@@ -45,9 +46,11 @@ export default class SaleChart extends Component {
             formatter: '{name}',
             data:[{name:'已完成额度',icon: '',textStyle:{
                 color: '#c3b06d',
-            }}, { name:'预约额度',textStyle:{
-                color: '#b9925f',
-            }}, { name:'未完成额度',textStyle:{
+            }}, 
+            // { name:'预约额度',textStyle:{
+            //     color: '#b9925f',
+            // }}, 
+            { name:'未完成额度',textStyle:{
                 color: '#cccccc',
             }},],
         },
@@ -56,7 +59,7 @@ export default class SaleChart extends Component {
             {
                 type:'pie',
                 radius: [ 25, 35],
-                center : ['50%', '40%'],
+                center : ['50%', '45%'],
                 silent: true,
                 data:[
                     {itemStyle:{  
@@ -70,7 +73,7 @@ export default class SaleChart extends Component {
             {
                 type:'pie',
                 radius : [ 40, 90 ],
-                center : ['50%', '40%'],
+                center : ['50%', '45%'],
                 roseType : 'radius',
                 markPoint: {
                     symbol: 'circle'
@@ -87,19 +90,19 @@ export default class SaleChart extends Component {
                     }
                 },
                 data:[
-                    {value: 300, name:'已完成额度',itemStyle:{  
+                    {value: value['sign'] || 300, name:'已完成额度',itemStyle:{  
                         normal: {
                             color: '#c3b06d',
                             label: {textStyle:{color: '#333333'}}
                         } 
                     }},
-                    {value: 80, name:'预约额度',itemStyle:{  
-                        normal: {
-                            color: '#b9925f',
-                            label: {textStyle:{color: '#333333'}}
-                        } 
-                    }},
-                    {value: 120, name:'未完成额度',itemStyle:{  
+                    // {value: 80, name:'预约额度',itemStyle:{  
+                    //     normal: {
+                    //         color: '#b9925f',
+                    //         label: {textStyle:{color: '#333333'}}
+                    //     } 
+                    // }},
+                    {value: (value['target'] - value['sign']) >0 ? (value['target'] - value['sign']) : 0 , name:'未完成额度',itemStyle:{  
                         normal: {
                             color: '#cccccc',
                             label: {textStyle:{color: '#333333'}}

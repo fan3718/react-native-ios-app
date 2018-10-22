@@ -5,6 +5,7 @@ const initialState = {
   isLoading: false,
   alert: null,
   isError: false,
+  isSuccess: false,
   errorCode: null,
 }
 
@@ -16,6 +17,7 @@ export default function httpRequest(state=initialState, action) {
         isLoading: true,
         alert: '加载中···',
         isError: false,
+        isSuccess: false,
         errorCode: null,
       }
     case types.IS_ERROR:
@@ -23,6 +25,7 @@ export default function httpRequest(state=initialState, action) {
         ...state,
         isLoading: false,
         isError: true,
+        isSuccess: false,
         alert: action.alert,
         errorCode: action.errorCode,
       }
@@ -31,7 +34,8 @@ export default function httpRequest(state=initialState, action) {
         ...state,
         isLoading: false,
         isError: false,
-        alert: null,
+        isSuccess: true,
+        alert: action.alert || null,
         errorCode: null,
       }
     default:

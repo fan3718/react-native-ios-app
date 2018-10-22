@@ -72,9 +72,11 @@ const BottomTabNavigator = createBottomTabNavigator({
         labelStyle: {
             fontSize: unitWidth * 22,
             fontFamily:  'PingFang-SC-Regular',
+            
         },
         style: {
             backgroundColor: 'white',
+            paddingTop: unitWidth * 15,
         },
     },
     // animationEnabled: true,
@@ -84,7 +86,7 @@ const BottomTabNavigator = createBottomTabNavigator({
     // //切换是否有动画
     // animationEnabled: true,
     //进入App的首页面
-    initialRouteName: 'Room',
+    initialRouteName: 'Service',
 });
 
 export default BottomTabNavigator

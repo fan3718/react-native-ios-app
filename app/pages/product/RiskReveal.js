@@ -6,17 +6,12 @@ import {
     FlatList,
     StyleSheet,
     TouchableOpacity,
+    AsyncStorage,
 } from 'react-native'
-import { NavigationActions } from 'react-navigation'
 
 import { RISK_REVEAL } from './../../config/StaticData'
 import { unitWidth } from '../../config/AdapterUtil'
 import { Header, } from '../../components/index'
-
-const detailAction = NavigationActions.navigate({
-  routeName: 'ProductDetail',
-  actions: NavigationActions.navigate({routeName: 'ProductDetail',})
-})
 
 export default class RiskReveal extends Component {
 
@@ -26,7 +21,6 @@ export default class RiskReveal extends Component {
             content: RISK_REVEAL.content,
             backType: this.props.navigation.state.params,
         }
-        // this.props.navigation.goBack(detailAction)
     }
 
     _keyExtractor = (item, index) => item.id;
@@ -54,9 +48,8 @@ export default class RiskReveal extends Component {
     }
 
     goBack() {
-        // console.info(this.props.navigation)
         if(this.state.backType && this.state.backType.type === 'detail') {
-            this.props.navigation.dispatch(detailAction)
+            this.props.navigation.navigate('ProductDetail')
         }else{
             this.props.navigation.goBack()
         }
@@ -83,7 +76,10 @@ class RiskFooter extends Component {
     }
 
     readKnow() {
-        this.props.props.navigation.dispatch(detailAction)
+        if(this.state.checked) {
+            AsyncStorage.setItem('kownRisk', 'true',(error, result) =>{})
+        }
+        this.props.props.navigation.navigate('ProductDetail',{id: this.props.props.navigation.state.params.id})
     }
 
     agree() {

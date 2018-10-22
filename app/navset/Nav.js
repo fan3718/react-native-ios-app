@@ -1,13 +1,25 @@
 import { createSwitchNavigator } from 'react-navigation'
-import LoginType from '../pages/login/LoginType'
 import RootStack from '../navset/StrakNav'
-import UserAgree from "../pages/login/UserAgree"
-import ProductDetail from "../pages/product/ProductDetail"
-import MyOrder from "../pages/room/MyOrder"
 
+import {
+    JobCalendars,EditCustomer,ViewCustomer,CustomerList,ChildrenPerform,PerformDetail,LoginType,
+    LauchPage, UserAgree,
+} from './../pages/index'
 const SwitchNav = createSwitchNavigator({
-    // MyOrder:  MyOrder,
-    App: RootStack
+    // LauchPage: {
+    //     screen: LauchPage,
+    //     navigationOptions: {
+    //         header: null,
+    //         headerBackTitle: "返回",
+    //     }
+    // },
+    // UserAgree: {
+    //     screen: UserAgree,
+    //     navigationOptions: {
+    //         headerTitle: '用户协议',
+    //     }
+    // },
+    App: RootStack,
 },{
     initialRouteName: 'App',
     navigationOptions: ({navigation}) => ({

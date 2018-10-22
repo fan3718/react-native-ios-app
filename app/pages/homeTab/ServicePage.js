@@ -1,130 +1,122 @@
 import React, { Component } from 'react'
 import {
     View,
-    Text,
     StyleSheet,
-    TouchableOpacity,
-    FlatList,
-    AsyncStorage,
 } from 'react-native'
 import { connect } from 'react-redux' // 引入connect函数
-import { NavigationActions } from 'react-navigation'
-import Swiper from 'react-native-swiper'
+import ScrollableTabView from 'react-native-scrollable-tab-view'
 
 import { unitWidth } from "../../config/AdapterUtil"
 import * as poductAction from '../../actions/ProductAction' // 导入action方法
-import { Header, TipPop, ProductCard } from '../../components/index'
+import { Header, TipPop, ProductCard, TabBar } from '../../components/index'
 
-
-
-const riskAction = NavigationActions.navigate({
-    routeName: 'RiskAgreement',
-    actions: NavigationActions.navigate({ routeName: 'RiskAgreement', })
-})
 class ServicePage extends Component {
     constructor(props) {
         super(props)
-        // AsyncStorage.setItem('token', JSON.stringify('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE1Mzg1NDg2NDYsImV4cCI6MTUzODcyMTQ0NiwidHlwZSI6MCwiaWQiOiIzIiwiZW50SWQiOiIyNSJ9.Z1TEnmVZ640hEMYdiaa8uwXt7C8uhl13v6bDYIap6lQ'),(error, result) =>{})
-        AsyncStorage.getItem('token')
-            .then((value) => {
-                let jsonValue = JSON.parse((value));
-                global.token = jsonValue
-                console.info(jsonValue)
-                this.setState({
-                    token: global.token, 
-                })
-                this.props.getProductsCate(jsonValue);
-            })
+        this.props.getProductsCate()
         this.state = {
-            token: global.token,
-            list: [],
-            page: 1,
-            total: 2,
-            active: '1',
-            category: [],
+            page: {},//第几页
+            totalPage: {},//共几条
+            limit: 20,//每页获取条数
+            catesList: [],
             products: {},
+            catesIds:[],
+            activeTab: 0,
         };
-        // this.props.getProductsCate(this.state.token);
     }
 
     componentWillReceiveProps(nextProps) {
         if(nextProps.catesList && nextProps.type === 'GOT_PRODUCTCATE') {
-            this.state.products[this.state.active] = nextProps.catesList.list;
+            let catesList = nextProps.catesList["category"];
+            let catesIds = []
+            let page = nextProps.catesList.page
+            catesList.forEach(element => {
+                catesIds.push(element.id)
+            });
+            let id = nextProps.catesList["category"][0].id
+            
             this.setState({
-                category: nextProps.catesList["category"],
-                active: nextProps.catesList["category"][0].id
+                catesIds: catesIds,
+                catesList: nextProps.catesList["category"],
+                page: {
+                    ...this.state.page,
+                    [id]: page.page,
+                },
+                totalPage: {
+                    ...this.state.totalPage,
+                    [id]: page.totalPage,
+                },
+                products: {
+                    ...this.state.products,
+                    [id]: nextProps.catesList.list,
+                }
             })
         }
         if(nextProps.productsList && nextProps.type === 'GOT_PRODUCTSLIST') {
-            this.state.products[this.state.active] = nextProps.productsList.list;
+                let id = this.state.catesIds[this.state.activeTab]
+                let page = nextProps.productsList.page
+                if(!this.state.products[id]){
+                    this.state.products[id] = []
+                }
+                this.setState({
+                    page: {
+                        ...this.state.page,
+                        [id]: page.page,
+                    },
+                    totalPage: {
+                        ...this.state.totalPage,
+                        [id]: page.totalPage,
+                    },
+                    products: {
+                        ...this.state.products,
+                        [id]: this.state.products[id].concat(nextProps.productsList['list'] || []),
+                    }
+                })
         }
     }
     getdata(id) {
         this.props.getProductsList({
-            token: this.state.token,
-            id: id,
-            page: 1,
-            limit: 10,
+            categoryId: id,
+            page: this.state.page[id] + 1 ||  1,
+            limit: this.state.limit,
         });
-        this.setState({
-            active: id
-        })
     }
 
-    scrollEnd(e,state) {
-        let id = this.state.category[state.index].id;
-        if(!this.state.products[id]) {
+    scrollEnd(id) {
+        console.info(id)
+        if(this.state.totalPage[id] > this.state.page[id]) {
             this.getdata(id)
         }
     }
     
 
-    _keyExtractor = (item, index) => item.id;
-
-    renderCateItem = ({ item }) => {
-        return (
-            <View style = { styles.secondBarItem }>
-                <Text onPress={ this.getdata.bind(this,item.id)} style = {styles.secondTitle}>{item.name}</Text>
-                {   
-                    this.state.active == item.id ? 
-                    <View style = { styles.active}></View> : null
-                }
-                
-            </View>
-        )
-    }
-
-    renderViewItem = ({ item }) => {
-        return (
-            <View>
-                <FlatList data = { this.state.products[this.state.active] }  style = { styles.body } keyExtractor={this._keyExtractor}
-                renderItem = {({item}) => <ProductCard props = {this.props} item = {item}></ProductCard> }/>
-            </View>
-        )
-    }
-
     render() {
-        let { token, alert, catesList, productsList } = this.props;
         return ( 
             <View style = { styles.container }>
                 <Header title= {'服务'} />
-                <View style = { styles.secondBar }>
-                    <FlatList
-                    data = { this.state.category } 
-                    keyExtractor={this._keyExtractor} 
-                    horizontal={true}
-                    renderItem = {this.renderCateItem}/>
-                </View>
-                <Swiper style={styles.wrapper} showsButtons = {false} 
-                onMomentumScrollEnd={(e, state, context) => this.scrollEnd(e,state)}
-                loop={false} showsPagination={false}>
+                <ScrollableTabView onChangeTab={(obj) => {
+                    this.setState({
+                        activeTab: obj.i
+                    },()=> {
+                        let id = this.state.catesIds[obj.i];
+                        if(!this.state.totalPage[id] && this.state.totalPage[id] !== 0){
+                            this.getdata(id)
+                        }
+                    })
+                }} initialPage= {0}
+                tabBarUnderlineStyle = {styles.tabLine}   
+                tabBarBackgroundColor='rgb(249,249,249)'
+                tabBarTextStyle={styles.tabText} renderTabBar={() =>
+                    <TabBar/>
+                }>  
                     {
-                       this.state.category.map((item)=>{
-                           return <FlatList data = { this.state.products[this.state.active] }  style = { styles.body } keyExtractor={this._keyExtractor} key={(item, index) => item.id}
-                           renderItem = {({item}) => <ProductCard props = {this.props} item = {item}></ProductCard> }/>;
-                       })
+                        this.state.catesList.map((item,index)=>
+                        <View tabLabel={item.name} key={item.id.toString()}>
+                            <ProductCard products={this.state.products[item.id]} onEnd={this.scrollEnd.bind(this,item.id)} navigation ={this.props.navigation}/>
+                        </View>
+                        )
                     }
-                </Swiper>
+                </ScrollableTabView>
                 <TipPop navigation = {this.props.navigation}></TipPop>
             </View>
         )
@@ -189,7 +181,7 @@ export default connect(
     (state) => ({
       type: state.productsReducer.type,
       catesList: state.productsReducer.catesList,
-      productsList: state.productsReducer.productsList,
+      productsList: state.productsReducer.productsList || {},
     }),
     (dispatch) => ({
         getProductsCate: (data) => dispatch(poductAction.getProductsCate(data)),

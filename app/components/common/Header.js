@@ -20,7 +20,7 @@ export default class Header extends Component {
   
 
   render() { 
-        const { title, hasBack, backTitle, type, nextTitle} = this.props
+        const { title, hasBack, backTitle, type, nextTitle, nextStyle, nextRender} = this.props
         let current = null
         let content = <View style = { styles.content }>
                         {
@@ -31,7 +31,10 @@ export default class Header extends Component {
                         }
                         <Text style = { styles.headerTitle }>{title}</Text>
                         {
-                            nextTitle? <View style = { styles.next }><Text style = { styles.nextText } onPress={() => this.props.next()}>{nextTitle}</Text></View>: null
+                            nextTitle? <View style = { styles.next }><Text style = { [styles.nextText, nextStyle ]} onPress={() => this.props.next()}>{nextTitle}</Text></View>: null
+                        }
+                        {
+                            nextRender? <View style = { styles.next }>{nextRender}</View>: null
                         }
                     </View>
         switch(type){
@@ -47,14 +50,14 @@ export default class Header extends Component {
 }
 const styles = StyleSheet.create({
     container: {
-        height: unitWidth * 130,
+        height: unitWidth * 120,
         width: '100%',
         // alignItems: 'flex-start',
         // justifyContent: 'center',
     },
     backgroundImage:{
         width: '100%',
-        height: unitWidth * 130,
+        height: unitWidth * 120,
     },
     content: {
         flex:1,
@@ -72,7 +75,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems:'center',
         justifyContent:'center',
-        height: unitWidth * 130,
+        height: unitWidth * 120,
     },
     next: {
         position: 'absolute',
@@ -81,7 +84,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems:'center',
         justifyContent:'center',
-        height: unitWidth * 130,
+        height: unitWidth * 120,
     },
     backTitle: {
         color: '#ffffff',

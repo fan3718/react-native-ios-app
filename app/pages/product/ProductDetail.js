@@ -3,57 +3,40 @@ import {
   View,
   Text,
   StyleSheet,
-  AsyncStorage,
-  SafeAreaView,
   TouchableOpacity,
   ImageBackground,
 } from 'react-native'
 import { connect } from 'react-redux' // 引入connect函数
-import { NavigationActions } from 'react-navigation'
 
 import { unitWidth } from '../../config/AdapterUtil'
 import * as poductAction from '../../actions/ProductAction' // 导入action方法
-import { PRODUCT, PRODUCT_STATUS, CURRENCY } from './../../config/StaticData'
+import * as httpAction from '../../actions/HttpAction' // 导入action方法
+import { PRODUCT_STATUS, CURRENCY } from './../../config/StaticData'
 import { TipPop, Header, ProductDetailCard, LongBtn} from '../../components/index'
-
-const backAction = NavigationActions.navigate({
-    routeName: 'BottomTabNavigator',
-    actions: NavigationActions.navigate({routeName: 'BottomTabNavigator',})
-})
-
-const toAction = NavigationActions.navigate({
-    routeName: 'ProductOrder',
-    actions: NavigationActions.navigate({routeName: 'ProductOrder',})
-})
 
 class ProductDetail extends Component {
     constructor (props) {
         super(props)
-        
-        // this.props.navigation.goBack('ServicePage');
-        // console.info(this.props)
-    }
-
-    componentWillReceiveProps(nextProps) {
-        // console.info(nextProps)
-        // if(nextProps.productDetail && nextProps.type === 'GOT_PRODUCTSDETAIL') {
-        //     console.info(nextProps)
-        // }
+        props.getProductsDetail({id:this.props.navigation.state.params.id})
     }
 
     goBack() {
-        this.props.navigation.dispatch(backAction)
+        this.props.navigation.navigate('Service')
     }
 
     toOrder() {
-        this.props.navigation.dispatch(toAction)
+        this.props.navigation.navigate('ProductOrder',{
+            id:this.props.navigation.state.params.id,
+            name: this.props.product.name,
+            minAmount: this.props.product.minAmount,
+        })
     }
+
     changeTab(index) {
-        if(index === 2 && !this.props.account) {
-            // this.props.getProductsDetail({
-            //     id: '1',
-            //     token: global.token
-            // })
+        if(index === 2 && JSON.stringify(this.props.account) === '{}') {
+            this.props.getProductsAccount({
+                id: this.props.navigation.state.params.id,
+            })
         }
     }
 
@@ -64,7 +47,7 @@ class ProductDetail extends Component {
             <Header title= {'产品详情'} hasBack={true} back={this.goBack.bind(this)} props = {this.props.navigation}/>
             <View style={styles.header}>
                 <View style={styles.headerContent}>
-                    <Text style={styles.textLight}>{product.netValue}</Text>
+                    <Text style={styles.textLight}>{product['netValue'] || 0}</Text>
                     <Text style={styles.textLittle}>当前净值</Text>
                     <View style={styles.textNameBox}>
                         <Text style={styles.textName}>{product.productReview}</Text>
@@ -72,21 +55,25 @@ class ProductDetail extends Component {
                 </View>
                 <View style={styles.headerTab}>
                     <View style={[styles.tabBox,styles.rightBorder]}>
-                        <Text style={styles.tabTextBig}>{product.riskyIcon}</Text>
+                        <Text style={styles.tabTextBig}>{product['riskyIcon'] || '无'}</Text>
                         <Text style={styles.textLittle}>风险等级</Text>
                     </View>
                     <View style={[styles.tabBox,styles.rightBorder]}>
-                        <Text style={styles.tabTextBig}>{product.minAmount}万{CURRENCY[product.currency]}</Text>
+                        <Text style={styles.tabTextBig}>{product['minAmount']}万{CURRENCY[product.currency]}</Text>
                         <Text style={styles.textLittle}>起投金额</Text>
                     </View>
                     <View style={styles.tabBox}>
-                        <Text style={styles.tabTextBig}>{PRODUCT_STATUS[product.status]}</Text>
+                        <Text style={styles.tabTextBig}>{PRODUCT_STATUS[product['status']]}</Text>
                         <Text style={styles.textLittle}>状态</Text>
                     </View>
                 </View>
             </View>
             <ProductDetailCard props = {this.props} changeTab={this.changeTab.bind(this)} />
-            <LongBtn title={'预约产品'} onPress={this.toOrder.bind(this)} />
+            <TouchableOpacity style={styles.bottomBar} activeOpacity={0.6} onPress={this.toOrder.bind(this)}>
+                <ImageBackground style={styles.btnImage} source={require('./../../assets/image/service/longBtn.png')}>
+                    <Text style={styles.bottomBtn}>预约产品</Text>
+                </ImageBackground>
+            </TouchableOpacity>
             <TipPop navigation = {this.props.navigation} />
         </View>
         )
@@ -176,16 +163,12 @@ const styles = StyleSheet.create({
 export default connect(
     (state) => ({
       type: state.productsReducer.type,
-      product: state.productsReducer.productDetail || PRODUCT,
-      account: state.productsReducer.account || {
-            accountName: '中信证券股份有限公司', // 开户名
-            bankName: '中信银行北京瑞城中心支行', // 募集银行
-            accountNo: '7116810187000003312', // 募集账号
-            memo: '认购深蓝启明11号证券投资基金', // 客户打款备注
-        },
+      product: state.productsReducer.productDetail || {},
+      account: state.productsReducer.account || {},
     }),
     (dispatch) => ({
         getProductsDetail: (data) => dispatch(poductAction.getProductsDetail(data)),
         getProductsAccount: (data) => dispatch(poductAction.getProductsAccount(data)),
+        isError: (data) => dispatch(httpAction.isError(data)),
     })
 )(ProductDetail)

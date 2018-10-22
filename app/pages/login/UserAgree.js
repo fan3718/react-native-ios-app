@@ -3,14 +3,8 @@ import {
   WebView
 } from 'react-native'
 import { connect } from 'react-redux' // 引入connect函数
-import { NavigationActions } from 'react-navigation'
 
 import * as loginAction from '../../actions/LoginAction' // 导入action方法
-
-const typeAction = NavigationActions.navigate({
-  routeName: 'LoginType',
-  actions: NavigationActions.navigate({routeName: 'LoginType',})
-})
 
 class UserAgree extends Component {
     static navigationOptions = {
@@ -22,7 +16,6 @@ class UserAgree extends Component {
     super(props);
     const { getAgreement } = props;
     getAgreement();
-    this.props.navigation.goBack('LoginType')
   }
 
   render() { 

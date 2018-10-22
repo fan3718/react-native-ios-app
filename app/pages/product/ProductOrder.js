@@ -3,30 +3,15 @@ import {
   View,
   Text,
   StyleSheet,
-  AsyncStorage,
-  TouchableOpacity,
   TextInput,
-  ImageBackground,
 } from 'react-native'
 import { connect } from 'react-redux' // 引入connect函数
-import { NavigationActions } from 'react-navigation'
 import moment from 'moment' // 引入connect函数
 
 import { unitWidth } from '../../config/AdapterUtil'
 import * as poductAction from '../../actions/ProductAction' // 导入action方法
 import * as httpAction from '../../actions/HttpAction' // 导入action方法
-import { PRODUCT, PRODUCT_STATUS, CURRENCY } from '../../config/StaticData'
 import { TipPop, Header, LongBtn} from '../../components'
-
-const backAction = NavigationActions.navigate({
-    routeName: 'ProductDetail',
-    actions: NavigationActions.navigate({routeName: 'ProductDetail',})
-})
-
-const toAction = NavigationActions.navigate({
-    routeName: 'OrderSuccess',
-    actions: NavigationActions.navigate({routeName: 'OrderSuccess',})
-})
 
 class ProductOrder extends Component {
     constructor (props) {
@@ -36,41 +21,35 @@ class ProductOrder extends Component {
             date:  moment(new Date()).format('YYYY-MM-DD'),
             memo: '',
         }
-        // AsyncStorage.setItem('token', JSON.stringify('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE1Mzg1NDg2NDYsImV4cCI6MTUzODcyMTQ0NiwidHlwZSI6MCwiaWQiOiIzIiwiZW50SWQiOiIyNSJ9.Z1TEnmVZ640hEMYdiaa8uwXt7C8uhl13v6bDYIap6lQ'),(error, result) =>{})
-        AsyncStorage.getItem('token')
-            .then((value) => {
-                let jsonValue = JSON.parse((value));
-                global.token = jsonValue
-                // console.info(jsonValue)
-                // this.props.getProductsDetail({
-                //     id: '1',
-                //     token: global.token
-                // })
-            })
-        // this.props.navigation.goBack('ServicePage');
-        // console.info(this.props)
     }
 
     componentWillReceiveProps(nextProps) {
         if(nextProps.order && nextProps.type === 'SUBMIT_PRODUCTSORDER') {
-            console.info(nextProps)
+            this.props.navigation.navigate('OrderSuccess',{...nextProps.order})
         }
     }
     goBack() {
-        this.props.navigation.dispatch(backAction)
+        this.refs.input.blur()
+        this.refs.inputs.blur()
+        this.props.navigation.goBack()
     }
 
     submit() {
-        this.props.navigation.dispatch(toAction)
+        this.refs.input.blur()
+        this.refs.inputs.blur()
         if(!this.state.amount) {
             this.props.isError({
                 msg: '请先填写预约额度，再提交',
                 errorCode: 2,
             })
+        }else if(parseFloat(this.state.amount) < this.props.navigation.state.params.minAmount) {
+            this.props.isError({
+                msg: '预约额度最少为'+ this.props.navigation.state.params.minAmount + '万',
+                errorCode: 2,
+            })
         }else {
             this.props.submitProductOrder({
-                token: global.token,
-                productId: this.props.product.id || 1, // 产品id
+                productId: this.props.navigation.state.params.id, // 产品id
                 reservationAmount: this.state.amount, // 预约购买金额
                 reservationDate: this.state.date, // 预约时间
                 memo: this.state.memo, // 备注
@@ -85,7 +64,7 @@ class ProductOrder extends Component {
             <Header title= {'产品预约'} hasBack={true} back={this.goBack.bind(this)} props = {this.props.navigation}/>
             <View style={styles.header}>
                 <View style={styles.headerContent}>
-                    <Text style={styles.textLight}>{product.name}</Text>
+                    <Text style={styles.textLight}>{this.props.navigation.state.params.name}</Text>
                     <Text style={styles.textLittle}>当前预约产品</Text>
                 </View>
             </View>
@@ -93,7 +72,7 @@ class ProductOrder extends Component {
                 <View style={styles.itemBox}>
                     <Text style={styles.itemLeft}>预约额度</Text>
                     <View style={styles.itemBox}>
-                        <TextInput style={styles.inputSingle} 
+                        <TextInput style={styles.inputSingle} ref='input'
                         placeholder = {'请填写您的预约额度'} placeholderTextColor={'#808080'}
                         onChangeText={(amount) => this.setState({amount})}
                         value={this.state.amount}/>
@@ -107,7 +86,7 @@ class ProductOrder extends Component {
                 <View style={styles.itemBox}>
                     <Text style={styles.itemLeft}>备注</Text>
                 </View>
-                <TextInput style={styles.inputMult}  multiline = {true}
+                <TextInput style={styles.inputMult}  multiline = {true} ref='inputs'
                 onChangeText={(memo) => this.setState({memo})}
                 value={this.state.memo}/>
             </View>
@@ -199,7 +178,6 @@ const styles = StyleSheet.create({
 export default connect(
     (state) => ({
       type: state.productsReducer.type,
-      product: state.productsReducer.productDetail || PRODUCT,
       order: state.productsReducer.order,
     }),
     (dispatch) => ({

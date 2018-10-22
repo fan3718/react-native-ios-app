@@ -1,53 +1,55 @@
 import React, { Component } from 'react'
 import {
   View,
-  ImageBackground,
+  Platform,
   Image,
   Text,
-  StatusBar,
   StyleSheet,
   TouchableOpacity,
-  AlertIOS,
+  Animated,
+  Alert,
 } from 'react-native'
-import { NavigationActions } from 'react-navigation'
 import Icon from 'react-native-vector-icons/FontAwesome'
+import { connect } from 'react-redux' // 引入connect函数
+import *as wechat from 'react-native-wechat'
 
-import { unitWidth } from '../../config/AdapterUtil'
+import * as loginAction from '../../actions/LoginAction' // 导入action方法
+import { unitWidth, width } from '../../config/AdapterUtil'
 import { TipPop, ShortLine} from '../../components/index'
 
-const loginMobile = NavigationActions.navigate({
-  routeName: 'LoginMobile',
-  actions: NavigationActions.navigate({routeName: 'LoginMobile',})
-})
-
-const userAgree = NavigationActions.navigate({
-  routeName: 'UserAgree',
-  actions: NavigationActions.navigate({routeName: 'UserAgree',})
-})
-
-export default  class LoginType extends Component {
-  // static navigationOptions = {
-  //   header: null,
-  //   headerBackTitle: "返回",
-  // };
+class LoginType extends Component {
 
   constructor(props) {
     super(props);
     this.state = { 
       checked: true,
       isError: true,
-      alert: null
+      alert: null,
+      right: new Animated.Value(-width),
     };
   } 
-  
+
+  componentWillReceiveProps(nextProps) {
+    if(nextProps.status === 'LoginType' && this.state.right._value == -width) {
+      this.toShow()
+    }
+  }
+
+  componentDidMount (){
+    wechat.registerApp('wx9c213e00c07b9e15')
+  }
+
   agree() {
     this.setState({
       checked: !this.state.checked,
     })
   }
+
   toMoble() {
     if(this.state.checked) {
-      this.props.navigation.dispatch(loginMobile)
+      this.toHide()
+      // this.props.navigation.navigate('LoginMobile')
+      this.props.nextStatus('LoginMobile')
     }else {
       this.setState({
         alert: '请先勾选协议'
@@ -56,20 +58,74 @@ export default  class LoginType extends Component {
   }
   toWechat() {
     if(this.state.checked) {
-
+      this.wxLogin()
     }else {
       this.setState({
         alert: '请先勾选协议'
       })
     }
   }
-  userAgree() {
-    this.props.navigation.dispatch(userAgree)
+
+  wxLogin() {
+      let scope = 'snsapi_userinfo';
+      let state = 'wechat_sdk_demo';
+      //判断微信是否安装
+      wechat.isWXAppInstalled()
+        .then((isInstalled) => {
+          if (isInstalled) {
+            //发送授权请求
+            wechat.sendAuthRequest(scope, state)
+              .then(responseCode => {
+                //返回code码，通过code获取access_token
+                // this.getAccessToken(responseCode.code);
+                this.props.wechatLogin(responseCode.code);
+              })
+              .catch(err => {
+                Alert.alert('登录授权发生错误：', err.message, [
+                  {text: '确定'}
+                ]);
+              })
+          } else {
+            Platform.OS == 'ios' ?
+              Alert.alert('没有安装微信', '是否安装微信？', [
+                {text: '取消'},
+                {text: '确定', onPress: () => {
+                  // this.installWechat()
+                }}
+              ]) :
+              Alert.alert('没有安装微信', '请先安装微信客户端在进行登录', [
+                {text: '确定'}
+              ])
+          }
+        })
   }
+  userAgree() {
+    this.props.navigation.navigate('UserAgree')
+  }
+
+  toHide() {
+      Animated.timing(this.state.right,
+          {
+            toValue: width, 
+            duration: 500,
+          }
+      ).start();
+  }
+
+  toShow() {
+      Animated.timing(this.state.right,
+          {
+            toValue: 0,
+            duration: 500,
+          }
+      ).start(() => {this.props.animate()});
+  }
+
   render() {
     return(
-      <View style={styles.container}>
-        <ImageBackground style={styles.backgroundImage} source={require('../../assets/image/login/loginBg.png')}>
+      <Animated.View style={[styles.container,{
+        right:this.state.right,//将动画对象赋值给需要改变的样式属性
+      }]}>
         <View style={styles.loginLogo}>
             <Image style={styles.logoImg}
             source={require('../../assets/image/login/loginLogo.png')}
@@ -113,9 +169,7 @@ export default  class LoginType extends Component {
             <Text style={styles.footerYellow} onPress={this.userAgree.bind(this)}>用户协议</Text>
           </View>
         </View>
-        </ImageBackground>
-        <TipPop navigation = {this.props.navigation}></TipPop>
-      </View>
+      </Animated.View>
     )
   }
 }
@@ -130,6 +184,10 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    right: -width,
   },
   backgroundImage:{
     flex:1,
@@ -234,3 +292,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgb(252,183,20)'
   },
 })
+export default connect(
+  (state) => ({
+    type: state.loginIn.type,
+    mobile: state.loginIn.mobile,
+    vcodeId: state.loginIn.vcodeId,
+  }),
+  (dispatch) => ({
+    login: () => dispatch(loginAction.login()),
+  })
+)(LoginType)

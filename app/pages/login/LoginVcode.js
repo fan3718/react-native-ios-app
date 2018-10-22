@@ -1,24 +1,15 @@
 import React, { Component } from 'react'
 import {
   View,
-  ImageBackground,
   Text,
   TextInput,
   StyleSheet,
-  TouchableOpacity,
-  AsyncStorage,
+  Animated,
 } from 'react-native';
 import { connect } from 'react-redux' // 引入connect函数
-import { NavigationActions } from 'react-navigation'
 
 import * as loginAction from '../../actions/LoginAction' // 导入action方法
-import { unitWidth } from '../../config/AdapterUtil'
-import { TipPop, } from '../../components/index'
-
-const faceReco = NavigationActions.navigate({
-  routeName: 'FaceReco',
-  actions: NavigationActions.navigate({routeName: 'FaceReco',})
-})
+import { unitWidth, width } from '../../config/AdapterUtil'
 
 class LoginVcode extends Component {
 
@@ -30,7 +21,22 @@ class LoginVcode extends Component {
         vcode3: '',
         vcode4: '',
         alert: '',
+        right: new Animated.Value(-width),
     };
+    
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if(nextProps.status === 'LoginVcode' && this.state.right._value == -width) {
+      this.toShow()
+      this.refs.code1.focus();
+    }
+    if(nextProps.type === 'GOT_TOKEN') {
+      AsyncStorage.setItem('token', JSON.stringify(global.token),(error, result) =>{})
+      this.props.changeType()
+      this.toHide()
+      this.props.nextStatus('FaceReco')
+    }
   }
 
   firstInput(vcode) {
@@ -38,6 +44,7 @@ class LoginVcode extends Component {
         vcode1: vcode,
     },()=>{
         let code2 = this.refs.code2;
+        this.refs.code1.blur();
         code2.focus();
     });
   }
@@ -47,6 +54,7 @@ class LoginVcode extends Component {
         vcode2: vcode,
     },()=>{
         let code3 = this.refs.code3;
+        this.refs.code2.blur();
         code3.focus();
     });
   }
@@ -56,6 +64,7 @@ class LoginVcode extends Component {
         vcode3: vcode,
     },()=>{
         let code4 = this.refs.code4;
+        this.refs.code3.blur();
         code4.focus();
     });
   }
@@ -64,6 +73,9 @@ class LoginVcode extends Component {
     this.setState({
         vcode4: vcode,
     },()=>{
+        this.refs.code4.blur();
+        // this.toHide();
+        // this.props.nextStatus('FaceReco')
         this.props.getToken({
           mobile: this.props.mobile,
           vcodeId: this.props.vcodeId,
@@ -72,18 +84,29 @@ class LoginVcode extends Component {
     });
   }
 
-  componentWillReceiveProps(nextProps) {
-    if(nextProps.type === 'GOT_TOKEN') {
-      AsyncStorage.setItem('token', JSON.stringify(global.token),(error, result) =>{})
-      this.props.navigation.dispatch(faceReco)
-    }
+  toHide() {
+      Animated.timing(this.state.right,
+          {
+            toValue: width, 
+            duration: 500,
+          }
+      ).start();
+  }
+
+  toShow() {
+      Animated.timing(this.state.right,
+          {
+            toValue: 0,
+            duration: 500,
+          }
+      ).start();
   }
 
   render() {
     return(
-      <View style={styles.container}>
-        <ImageBackground style={styles.backgroundImage}
-        source={require('../../assets/image/login/loginBg.png')}>
+      <Animated.View style={[styles.container,{
+        right:this.state.right,//将动画对象赋值给需要改变的样式属性
+      }]}>
         <View style={styles.textPos}>
           <View style={styles.yellowDot}></View>
           <Text style={styles.welcomeText}>欢迎,{'\n'}请输入验证码
@@ -91,8 +114,8 @@ class LoginVcode extends Component {
           <Text style={styles.tipText}>稍后会进行面部信息录入</Text>
         </View>
         <View style={styles.vcodePos}>
-            <TextInput style={styles.vcodeInput} maxLength = {1}
-            onChangeText={(vcode) => this.firstInput(vcode)} autoFocus={true}
+            <TextInput ref = "code1" style={styles.vcodeInput} maxLength = {1}
+            onChangeText={(vcode) => this.firstInput(vcode)}
             value={this.state.vcode1}/>
             <TextInput ref = "code2" style={styles.vcodeInput} maxLength = {1}
             onChangeText={(vcode) => this.secondInput(vcode)}
@@ -104,9 +127,7 @@ class LoginVcode extends Component {
             onChangeText={(vcode) => this.fourthInput(vcode)}
             value={this.state.vcode4}/>
         </View>
-        </ImageBackground>
-        <TipPop navigation = {this.props.navigation}></TipPop>
-      </View>
+      </Animated.View>
     )
   }
 }
@@ -116,6 +137,10 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    right: -width,
   },
   backgroundImage:{
     flex:1,
@@ -131,15 +156,16 @@ const styles = StyleSheet.create({
   },
   textPos: {
     flex: 1,
-    alignItems:'flex-start',
-    justifyContent:'flex-end',
+    // alignItems:'flex-start',
+    // justifyContent:'flex-end',
     position: 'relative',
     width: unitWidth * 620,
+    paddingTop: unitWidth * 200,
   },
   yellowDot: {
     position: 'absolute',
-    bottom: '10%',
-    left: '54%',
+    bottom: unitWidth * 180,
+    left: unitWidth * 330,
     width: unitWidth * 46,
     height: unitWidth * 46,
     borderRadius: unitWidth * 46,
@@ -162,7 +188,7 @@ const styles = StyleSheet.create({
     justifyContent:'space-between',
     position: 'relative',
     width: unitWidth * 620,
-    paddingTop: '20%'
+    paddingTop: '10%'
   },
   vcodeInput: {
     // flex: 1,
@@ -189,5 +215,6 @@ export default connect(
   (dispatch) => ({
     login: () => dispatch(loginAction.login()),
     getToken: (data) => dispatch(loginAction.getToken(data)),
+    changeType: () => dispatch(loginAction.changeType()),
   })
 )(LoginVcode)

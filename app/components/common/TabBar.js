@@ -15,12 +15,8 @@ export default class TabBar extends Component {
             posLeft: 0
         }
     }
-    componentWillReceiveProps(nextProps) {
-        // console.info(nextProps)
-    }
 
     componentDidMount() {
-        // this.posLeft = this.props.activeTab
         this.props.scrollValue.addListener(this.setAnimationValue.bind(this));    
     }
 
@@ -30,7 +26,7 @@ export default class TabBar extends Component {
 
     setAnimationValue({value}) {
         this.setState({
-            posLeft: unitWidth * 150 * value
+            posLeft: unitWidth * (this.props.width || 150) * value
         })
     }
 
@@ -39,21 +35,21 @@ export default class TabBar extends Component {
     }
 
     render() { 
-        const { tabs } = this.props
+        const { tabs, tabWidth, lineStyle, layout,tabText } = this.props
         return(
-            <View style={styles.container}>
+            <View style={[styles.container,layout]}>
                 <View style={styles.tabBarBox}>
                     <View style={styles.tabContent}>
                         {
                             tabs.map((item,index) => {
-                                return <View style={styles.tabTextBox} key={index + 'tab'}>
-                                    <Text onPress={this.changeTab.bind(this,index)} style={styles.tabText}>{item}</Text>
+                                return <View style={[styles.tabTextBox, tabWidth]} key={index + 'tab'}>
+                                    <Text onPress={this.changeTab.bind(this,index)} style={[styles.tabText,tabText]}>{item}</Text>
                                 </View>
                             })
                         }
                     </View>
                     <View style={[styles.tabLinePos,{left: this.state.posLeft}]}>
-                        <View style={styles.tabLine}></View>
+                        <View style={[styles.tabLine,lineStyle]}></View>
                     </View>
                 </View>
             </View>
@@ -70,7 +66,6 @@ const styles = StyleSheet.create({
     },
     tabBarBox: {
         position: 'relative',
-        
     },
     tabContent: {
         flexDirection: 'row',
@@ -95,7 +90,6 @@ const styles = StyleSheet.create({
     tabLinePos: {
         position: 'absolute',
         bottom: unitWidth * 1,
-        left: this.posLeft,
     },
     tabLine: {
         width: unitWidth * 50,

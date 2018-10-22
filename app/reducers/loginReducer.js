@@ -29,6 +29,11 @@ export default function loginIn(state=initialState, action) {
         ...state,
         type: 'GOT_TOKEN',
       }
+    case types.SPECIAL_TYPE:
+      return {
+        ...state,
+        type: 'SPECIAL_TYPE',
+      }
     default:
     // console.log(state);
       return state;

@@ -2,20 +2,16 @@
 
 import * as types from '../constant'
 import { server_path } from '../config/config'
-import { isLoading, isError, httpRequest } from './HttpAction'
+import { isLoading, isError, httpRequest, combindParams } from './HttpAction'
 
 //获取资讯列表
 export function getNewsList(params) {
   return dispatch => {
     dispatch(isLoading());
     let request = new Request(
-      server_path + '/info/list', {
+      combindParams(server_path + '/info/list',params), {
       method: 'GET',
-      headers: ({'Token': params.token}),
-      data: JSON.stringify({
-        page: params.page, // [可选] 当前页
-        limit: params.limit, // [可选] 每页条数
-      }),
+      headers: ({'Token': global.token}),
     });
     dispatch(httpRequest(request,getNewsListSuccess));
   }
@@ -25,12 +21,9 @@ export function getNewsDetail(params) {
   return dispatch => {
     dispatch(isLoading());
     let request = new Request(
-      server_path + '/info/detail', {
+      combindParams(server_path + '/info/detail',params), {
       method: 'GET',
-      headers: ({'Token': params.token}),
-      data: JSON.stringify({
-        id: params.id,
-      }),
+      headers: ({'Token': global.token}),
     });
     dispatch(httpRequest(request,getNewsDetailSuccess));
   }

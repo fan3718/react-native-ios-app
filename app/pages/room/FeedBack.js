@@ -3,19 +3,13 @@ import {
   View,
   Text,
   StyleSheet,
-  AsyncStorage,
-  TouchableOpacity,
   TextInput,
-  ImageBackground,
 } from 'react-native'
 import { connect } from 'react-redux' // 引入connect函数
-import { NavigationActions } from 'react-navigation'
-import moment from 'moment' // 引入connect函数
 
 import { unitWidth } from '../../config/AdapterUtil'
 import * as orderAction from '../../actions/OrderAction' // 导入action方法
 import * as httpAction from '../../actions/HttpAction' // 导入action方法
-import { PRODUCT, PRODUCT_STATUS, CURRENCY } from '../../config/StaticData'
 import { TipPop, Header, LongBtn} from '../../components'
 
 
@@ -24,18 +18,11 @@ class FeedBack extends Component {
         super(props)
         this.state = {
             feedBack: '',
-            id: this.props.navigation.state.params.id,
         }
-        AsyncStorage.getItem('token')
-            .then((value) => {
-                let jsonValue = JSON.parse((value));
-                global.token = jsonValue
-                // console.info(jsonValue)
-            })
     }
 
     componentWillReceiveProps(nextProps) {
-        if(nextProps.type === 'ACCEPT_ORDER') {
+        if(nextProps.type === 'SEND_FEEDBACK') {
             this.props.navigation.navigate("MyOrder");
         }
     }
@@ -45,17 +32,15 @@ class FeedBack extends Component {
     }
 
     submit() {
-        this.props.navigation.navigate("MyOrder");
-        if(!this.state.amount) {
+        if(!this.state.feedBack) {
             this.props.isError({
                 msg: '请先填写反馈缘由，再点击确认发送',
                 errorCode: 2,
             })
         }else {
             this.props.sendFeedback({
-                token: global.token,
                 feedBack: this.state.feedBack, // 产品id
-                id: this.state.id, 
+                id: this.props.navigation.state.params.id, 
             })
         }
     }
