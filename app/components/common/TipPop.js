@@ -17,7 +17,7 @@ class TipPop extends Component {
         super(props)
         this.state = {
             show: false,
-            showLoading: true,
+            showLoading: false,
         }
     }
   
