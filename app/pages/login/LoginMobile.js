@@ -80,7 +80,7 @@ class LoginMobile extends Component {
             source={require('../../assets/image/login/china.png')}></Image>
             <TextInput ref= 'input' placeholder = {this.state.Placeholder}
             placeholderTextColor = "white" maxLength = {11} textContentType = "telephoneNumber"
-            style={styles.editInput}
+            style={styles.editInput} keyboardType = "numeric"
             onChangeText={(mobile) => this.onChanged(mobile)}
             value={this.state.mobile}/>
           </View>

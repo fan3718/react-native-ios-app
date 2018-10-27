@@ -42,30 +42,30 @@ import {
             headerTitle: '用户协议',
         }
     },
-    LoginMobile: {
-        screen: LoginMobile,
-        navigationOptions: {
-            header: null,
-        }
-    },
-    LoginVcode: {
-        screen: LoginVcode,
-        navigationOptions: {
-            header: null,
-        }
-    },
-    FaceReco: {
-        screen: FaceReco,
-        navigationOptions: {
-            header: null,
-        }
-    },
-    RecoSuccess: {
-        screen: RecoSuccess,
-        navigationOptions: {
-            header: null,
-        }
-    },
+    // LoginMobile: {
+    //     screen: LoginMobile,
+    //     navigationOptions: {
+    //         header: null,
+    //     }
+    // },
+    // LoginVcode: {
+    //     screen: LoginVcode,
+    //     navigationOptions: {
+    //         header: null,
+    //     }
+    // },
+    // FaceReco: {
+    //     screen: FaceReco,
+    //     navigationOptions: {
+    //         header: null,
+    //     }
+    // },
+    // RecoSuccess: {
+    //     screen: RecoSuccess,
+    //     navigationOptions: {
+    //         header: null,
+    //     }
+    // },
     //产品/服务
     ProductDetail: {
         screen: ProductDetail,

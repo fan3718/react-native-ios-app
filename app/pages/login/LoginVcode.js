@@ -5,6 +5,7 @@ import {
   TextInput,
   StyleSheet,
   Animated,
+  AsyncStorage,
 } from 'react-native';
 import { connect } from 'react-redux' // 引入connect函数
 
@@ -20,7 +21,7 @@ class LoginVcode extends Component {
         vcode2: '',
         vcode3: '',
         vcode4: '',
-        alert: '',
+        code1Fous: false,
         right: new Animated.Value(-width),
     };
     
@@ -28,11 +29,15 @@ class LoginVcode extends Component {
 
   componentWillReceiveProps(nextProps) {
     if(nextProps.status === 'LoginVcode' && this.state.right._value == -width) {
+      this.setState({
+        code1Fous: true,
+      })
       this.toShow()
-      this.refs.code1.focus();
+      // this.refs.code1.focus();
     }
     if(nextProps.type === 'GOT_TOKEN') {
       AsyncStorage.setItem('token', JSON.stringify(global.token),(error, result) =>{})
+      // console.info(global.token)
       this.props.changeType()
       this.toHide()
       this.props.nextStatus('FaceReco')
@@ -40,6 +45,9 @@ class LoginVcode extends Component {
   }
 
   firstInput(vcode) {
+    if(!vcode) {
+      return false
+    }
     this.setState({
         vcode1: vcode,
     },()=>{
@@ -50,6 +58,9 @@ class LoginVcode extends Component {
   }
 
   secondInput(vcode) {
+    if(!vcode) {
+      return false
+    }
     this.setState({
         vcode2: vcode,
     },()=>{
@@ -60,6 +71,9 @@ class LoginVcode extends Component {
   }
 
   thirdInput(vcode) {
+    if(!vcode) {
+      return false
+    }
     this.setState({
         vcode3: vcode,
     },()=>{
@@ -70,6 +84,9 @@ class LoginVcode extends Component {
   }
 
   fourthInput(vcode) {
+    if(!vcode) {
+      return false
+    }
     this.setState({
         vcode4: vcode,
     },()=>{
@@ -114,16 +131,16 @@ class LoginVcode extends Component {
           <Text style={styles.tipText}>稍后会进行面部信息录入</Text>
         </View>
         <View style={styles.vcodePos}>
-            <TextInput ref = "code1" style={styles.vcodeInput} maxLength = {1}
-            onChangeText={(vcode) => this.firstInput(vcode)}
+            <TextInput ref = "code1" style={styles.vcodeInput} maxLength = {1} keyboardType = "numeric"
+            onChangeText={(vcode) => this.firstInput(vcode)} autoFocus = {this.state.code1Fous}
             value={this.state.vcode1}/>
-            <TextInput ref = "code2" style={styles.vcodeInput} maxLength = {1}
+            <TextInput ref = "code2" style={styles.vcodeInput} maxLength = {1} keyboardType = "numeric"
             onChangeText={(vcode) => this.secondInput(vcode)}
             value={this.state.vcode2}/>
-            <TextInput ref = "code3" style={styles.vcodeInput} maxLength = {1}
+            <TextInput ref = "code3" style={styles.vcodeInput} maxLength = {1} keyboardType = "numeric"
             onChangeText={(vcode) => this.thirdInput(vcode)}
             value={this.state.vcode3}/>
-            <TextInput ref = "code4" style={styles.vcodeInput} maxLength = {1}
+            <TextInput ref = "code4" style={styles.vcodeInput} maxLength = {1} keyboardType = "numeric"
             onChangeText={(vcode) => this.fourthInput(vcode)}
             value={this.state.vcode4}/>
         </View>

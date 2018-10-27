@@ -271,10 +271,18 @@ const styles = StyleSheet.create({
         fontFamily:  'PingFang-SC-Regular',
     },
     syeImgBox: {
+        width: unitWidth * 40,
+        height: unitWidth * 40,
+        paddingLeft: unitWidth * 20,
+        paddingRight: unitWidth * 20,
         marginLeft: unitWidth * 20,
         marginTop: unitWidth * 10,
+        // backgroundColor:'red',
+        textAlign: 'right',
     },
     eyeImg: {
+        marginLeft: unitWidth * 20,
+        marginTop: unitWidth * 60,
         width: unitWidth * 31,
         // height: '100%',
         resizeMode: 'contain',

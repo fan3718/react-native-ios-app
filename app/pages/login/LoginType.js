@@ -13,6 +13,8 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 import { connect } from 'react-redux' // 引入connect函数
 import *as wechat from 'react-native-wechat'
 
+import { server_path } from './../../config/config'
+import * as httpAction from '../../actions/HttpAction' // 导入action方法
 import * as loginAction from '../../actions/LoginAction' // 导入action方法
 import { unitWidth, width } from '../../config/AdapterUtil'
 import { TipPop, ShortLine} from '../../components/index'
@@ -36,7 +38,7 @@ class LoginType extends Component {
   }
 
   componentDidMount (){
-    wechat.registerApp('wx9c213e00c07b9e15')
+    wechat.registerApp('wxacd1511e233211e0')// wx9c213e00c07b9e15
   }
 
   agree() {
@@ -51,24 +53,48 @@ class LoginType extends Component {
       // this.props.navigation.navigate('LoginMobile')
       this.props.nextStatus('LoginMobile')
     }else {
-      this.setState({
-        alert: '请先勾选协议'
-      })
+      this.props.isError({
+          msg: '请先勾选协议',
+          errorCode: 2,
+      }) 
     }
   }
   toWechat() {
     if(this.state.checked) {
       this.wxLogin()
     }else {
-      this.setState({
-        alert: '请先勾选协议'
-      })
+      this.props.isError({
+          msg: '请先勾选协议',
+          errorCode: 2,
+      }) 
     }
+  }
+
+  wechatLogin(code) {
+    let request = new Request(
+      server_path + '/auth/wechat',{
+      method: 'POST',
+      body: JSON.stringify({
+        code: code,
+        type: 0, // 类型 员工:0 投资者:1
+      })
+    });
+    fetch(request).then((res)=>{
+        let data = JSON.parse(res._bodyInit);
+        if(data['errorCode'] === 0) {
+            Alert.alert(token);
+            AsyncStorage.setItem('token', JSON.stringify(global.token),(error, result) =>{})
+            this.toHide()
+            this.props.nextStatus('FaceReco')
+        }else if(data['errorCode'] === 11){
+            this.props.isError(data)
+        }
+    })
   }
 
   wxLogin() {
       let scope = 'snsapi_userinfo';
-      let state = 'wechat_sdk_demo';
+      let state = 'wechat_sdk_demo';//用于保持请求和回调的状态，授权请求后原样带回给第三方。该参数可用于防止csrf攻击（跨站请求伪造攻击），建议第三方带上该参数，可设置为简单的随机数加session进行校验
       //判断微信是否安装
       wechat.isWXAppInstalled()
         .then((isInstalled) => {
@@ -78,7 +104,7 @@ class LoginType extends Component {
               .then(responseCode => {
                 //返回code码，通过code获取access_token
                 // this.getAccessToken(responseCode.code);
-                this.props.wechatLogin(responseCode.code);
+                this.wechatLogin(responseCode.code);
               })
               .catch(err => {
                 Alert.alert('登录授权发生错误：', err.message, [
@@ -300,5 +326,6 @@ export default connect(
   }),
   (dispatch) => ({
     login: () => dispatch(loginAction.login()),
+    isError: (data) => dispatch(httpAction.isError(data)),
   })
 )(LoginType)

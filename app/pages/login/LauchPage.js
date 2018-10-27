@@ -5,8 +5,8 @@ import {
   AsyncStorage,
   Animated,
   StyleSheet,
-  Image,
-  TouchableOpacity,
+  NetInfo,
+  Alert,
 } from 'react-native'
 import { connect } from 'react-redux' // 引入connect函数
 
@@ -32,25 +32,42 @@ class LauchPage extends Component {
         let jsonValue = JSON.parse((value));
         global.token = jsonValue
         this.getUserInfo();
+        this.validToken();
     })
   } 
 
-  getUserInfo() {
-    let request = new Request(
-        server_path + '/user/info', {
-        headers: ({'Token': global.token}),
-    });
-    fetch(request).then((res)=>{
-        let data = JSON.parse(res._bodyInit);
-        if(data['errorCode'] === 0) {
-            this.props.navigation.navigate("BottomTabNavigator")
-        }else if(data['errorCode'] === 401) {
-            this.setState({
-              status: 'LoginType'
-            })
-        }
-    })
-  }
+    validNavigate
+    validToken() {
+      this.validNavigate = setInterval(() => {
+          if(this.state.status === null) {
+            this.getUserInfo();
+          }else{
+            clearInterval(this.validNavigate)
+          }
+      },10000)
+    }
+
+    componentWillUnmount() {
+      clearInterval(this.validNavigate)
+    }
+
+    getUserInfo() {
+      let request = new Request(
+          server_path + '/user/info', {
+          headers: ({'Token': global.token}),
+      });
+      fetch(request).then((res)=>{
+          let data = JSON.parse(res._bodyInit);
+          if(data['errorCode'] === 0) {
+              clearInterval(this.validNavigate)
+              this.props.navigation.navigate("BottomTabNavigator")
+          }else if(data['errorCode'] === 401) {
+              this.setState({
+                status: 'LoginType'
+              })
+          }
+      })
+    }
 
   nextStatus(status) {
       this.setState({
