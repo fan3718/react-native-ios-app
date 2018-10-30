@@ -91,7 +91,7 @@ class PerformDetail extends Component {
     }
 
     scrollEnd(type) {
-        if(this.state.couldFresh && this.state.totalPage[type] > this.state.page[type]) {
+        if(!this.state.couldFresh && this.state.totalPage[type] > this.state.page[type]) {
             this.getList(type)
         }
     }
