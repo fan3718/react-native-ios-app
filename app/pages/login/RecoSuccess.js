@@ -25,16 +25,16 @@ class RecoSuccess extends Component {
   componentWillReceiveProps(nextProps) {
     if(nextProps.status === 'RecoSuccess' && this.state.right._value == -width) {
       this.toShow()
-      //  this.time= setInterval(()=>{
-      //   this.setState({
-      //     num: this.state.num - 1
-      //   },() => {
-      //     if(this.state.num === 0) {
-      //       clearInterval(this.time)
-      //       this.toHome()
-      //     }
-      //   })
-      // },1000);
+       this.time= setInterval(()=>{
+        this.setState({
+          num: this.state.num - 1
+        },() => {
+          if(this.state.num === 0) {
+            clearInterval(this.time)
+            this.toHome()
+          }
+        })
+      },1000);
     }
   }
 
@@ -77,7 +77,7 @@ class RecoSuccess extends Component {
             <Image style={styles.faceImg} source={require('../../assets/image/login/registerSuccess.png')}/>
             <TouchableOpacity onPress={this.toHome.bind(this)}  style={styles.btnImg}>
               <ImageBackground style={styles.btnBg} source={require('../../assets/image/login/welcomeBtn.png')}>
-                <Text style={[styles.jumpTip]}>欢迎回来
+                <Text style={[styles.jumpTip,styles.timeAccount]}>欢迎回来
                   <Text style={[styles.jumpTip,styles.timeAccount]}>（{this.state.num}）</Text> 
                 </Text>
               </ImageBackground>
@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
     // position: 'absolute',
     // left: '50%' ,
     // top: '45%',
-    color: '#f9f9f9',
+    color: '#f0f0f0',
   },
   jumpPos: {
     flexDirection: 'row',

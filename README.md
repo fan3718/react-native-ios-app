@@ -7,10 +7,20 @@ npm install -g yarn react-native-cli
 cd ./phcf/
 npm install/yarn install
 
-
+```
 react-native-scrollable-tab-view SceneComponent.js 报错
     cd ./node_module/react-native-scrollable-tab-view/SceneComponent.js
     第九行  ...props 后 ','删除
+
+native echarts
+    Platform引入
+    import { WebView, View, StyleSheet, Platform } from 'react-native';
+    const source = Platform.OS === 'ios' ? require('./tpl.html') : { uri: 'file:///android_asset/tpl.html'}
+    
+    <WebView
+    originWhitelist={['*']}
+    source={source}/>
+```
 
 ## Run
 
