@@ -35,8 +35,8 @@ class JobCalendars extends Component {
         this.state = {
             selectedDate: moment(new Date()).format('YYYY-MM-DD'),
             markedDates: {
-                '2018-10-25': {marked: true},
-                '2018-10-26': {marked: true},
+                // '2018-10-25': {marked: true},
+                // '2018-10-26': {marked: true},
             },
             sectionID: null
         }

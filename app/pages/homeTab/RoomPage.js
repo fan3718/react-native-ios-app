@@ -72,7 +72,7 @@ class RoomPage extends Component {
                             <TouchableOpacity style={styles.tabBtn} onPress={this.toOrderList.bind(this)}>
                                 <Image style={styles.tabIcon} source={require('../../assets/image/room/alarm.png')}/>
                                 <View>
-                                    <View style={styles.redDot}></View>
+                                    {/* <View style={styles.redDot}></View> */}
                                     <Text style={styles.tabText}>我的预约</Text>
                                 </View>  
                             </TouchableOpacity>

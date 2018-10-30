@@ -60,6 +60,7 @@
 		D9BA115F217B034A00F58B16 /* libsqlite3.0.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = D9BA115E217B034A00F58B16 /* libsqlite3.0.tbd */; };
 		D9BA1161217B035B00F58B16 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = D9BA1160217B035B00F58B16 /* libc++.tbd */; };
 		D9BA1163217B036C00F58B16 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = D9BA1162217B036C00F58B16 /* libz.tbd */; };
+		D9C31AB12187EFD8007AF659 /* bundle in Resources */ = {isa = PBXBuildFile; fileRef = D9C31AB02187EFD8007AF659 /* bundle */; };
 		F14BFE72B3884B6B99BDCF40 /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B7441618398A4E09BF3FBC1D /* SimpleLineIcons.ttf */; };
 		F7C79EE8143A4504A52388DD /* libRCTWeChat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ED10D490B538422FA9AED4AF /* libRCTWeChat.a */; };
 /* End PBXBuildFile section */
@@ -411,6 +412,7 @@
 		D9BA115E217B034A00F58B16 /* libsqlite3.0.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.0.tbd; path = usr/lib/libsqlite3.0.tbd; sourceTree = SDKROOT; };
 		D9BA1160217B035B00F58B16 /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
 		D9BA1162217B036C00F58B16 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
+		D9C31AB02187EFD8007AF659 /* bundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = bundle; sourceTree = "<group>"; };
 		ED10D490B538422FA9AED4AF /* libRCTWeChat.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRCTWeChat.a; sourceTree = "<group>"; };
 		F25495DD32A646D79C57B878 /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -562,6 +564,7 @@
 		13B07FAE1A68108700A75B9A /* phcf */ = {
 			isa = PBXGroup;
 			children = (
+				D9C31AB02187EFD8007AF659 /* bundle */,
 				D90A5AA02164A88A007E2636 /* Fonts */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
@@ -1230,6 +1233,7 @@
 				D4C9CD20949748A2A4A1D33C /* FontAwesome5_Regular.ttf in Resources */,
 				D1A6023493CE4B98808CC50D /* FontAwesome5_Solid.ttf in Resources */,
 				2BA556873185498A978A488E /* Foundation.ttf in Resources */,
+				D9C31AB12187EFD8007AF659 /* bundle in Resources */,
 				19579E602C4D42A096917B42 /* Ionicons.ttf in Resources */,
 				78D732F76CCD4E209B788622 /* MaterialCommunityIcons.ttf in Resources */,
 				77EEEE7119B94BBF894662D9 /* MaterialIcons.ttf in Resources */,
@@ -1424,15 +1428,16 @@
 					"$(SRCROOT)/../node_modules/react-native-wechat/ios",
 				);
 				INFOPLIST_FILE = phcf/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.puhui.puhui.test;
 				PRODUCT_NAME = phcf;
-				PROVISIONING_PROFILE_SPECIFIER = puhuiTest;
+				PROVISIONING_PROFILE_SPECIFIER = "puhui Test";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -1450,15 +1455,16 @@
 					"$(SRCROOT)/../node_modules/react-native-wechat/ios",
 				);
 				INFOPLIST_FILE = phcf/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.puhui.puhui.test;
 				PRODUCT_NAME = phcf;
-				PROVISIONING_PROFILE_SPECIFIER = puhuiTest;
+				PROVISIONING_PROFILE_SPECIFIER = "puhui Test";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
@@ -1473,6 +1479,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_TESTABILITY = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
 				HEADER_SEARCH_PATHS = (
@@ -1510,6 +1517,7 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
 				GCC_NO_COMMON_BLOCKS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",

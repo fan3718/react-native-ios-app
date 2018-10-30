@@ -9,7 +9,7 @@ import {
  
 import Echarts from 'native-echarts';
 import Dimensions from 'Dimensions';
-const {width} = Dimensions.get('window');
+const { unitWidth,width} = Dimensions.get('window');
 export default class SaleChart extends Component {
  
   constructor(props) {

@@ -33,7 +33,7 @@ class LoginVcode extends Component {
         code1Fous: true,
       })
       this.toShow()
-      // this.refs.code1.focus();
+      this.refs.code1.focus()
     }
     if(nextProps.type === 'GOT_TOKEN') {
       AsyncStorage.setItem('token', JSON.stringify(global.token),(error, result) =>{})
@@ -54,6 +54,7 @@ class LoginVcode extends Component {
         let code2 = this.refs.code2;
         this.refs.code1.blur();
         code2.focus();
+        this.toGetToken();
     });
   }
 
@@ -67,6 +68,7 @@ class LoginVcode extends Component {
         let code3 = this.refs.code3;
         this.refs.code2.blur();
         code3.focus();
+        this.toGetToken();
     });
   }
 
@@ -80,6 +82,7 @@ class LoginVcode extends Component {
         let code4 = this.refs.code4;
         this.refs.code3.blur();
         code4.focus();
+        this.toGetToken();
     });
   }
 
@@ -90,15 +93,25 @@ class LoginVcode extends Component {
     this.setState({
         vcode4: vcode,
     },()=>{
-        this.refs.code4.blur();
-        // this.toHide();
-        // this.props.nextStatus('FaceReco')
-        this.props.getToken({
-          mobile: this.props.mobile,
-          vcodeId: this.props.vcodeId,
-          vcode: this.state.vcode1 + this.state.vcode2 +this.state.vcode3 +this.state.vcode4,
-        });
+        this.toGetToken();
     });
+  }
+
+  toGetToken() {
+      if(this.state.vcode1 == '' || this.state.vcode2 == '' || this.state.vcode3 == ''||this.state.vcode4 == '') {
+        return false
+      }
+      this.refs.code1.blur();
+      this.refs.code2.blur();
+      this.refs.code3.blur();
+      this.refs.code4.blur();
+      // this.toHide();
+      // this.props.nextStatus('FaceReco')
+      this.props.getToken({
+        mobile: this.props.mobile,
+        vcodeId: this.props.vcodeId,
+        vcode: this.state.vcode1 + this.state.vcode2 +this.state.vcode3 +this.state.vcode4,
+      });
   }
 
   toHide() {
@@ -209,11 +222,12 @@ const styles = StyleSheet.create({
   },
   vcodeInput: {
     // flex: 1,
-    alignItems:'center',
-    justifyContent:'center',
+    // alignItems:'center',
+    // justifyContent:'center',
     width: '20%',
-    paddingLeft: 20,
-    paddingRight: 20,
+    textAlign: 'center',
+    // paddingLeft: 20,
+    // paddingRight: 20,
     color: '#ffffff',
     fontSize: unitWidth * 72,
     fontFamily:  'PingFang-SC-Medium',

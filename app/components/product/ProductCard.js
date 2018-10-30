@@ -46,10 +46,7 @@ class ProductCard extends Component {
                         <View style = {styles.cardTag}>
                             <Text style = {styles.TagTitle}>{item.riskyIcon}产品</Text>
                         </View> : null
-                    } 
-                    <View style = {styles.cardTag}>
-                        <Text style = {styles.TagTitle}>R2 产品</Text>
-                    </View>
+                    }
                 </View>
                 <Icon name="chevron-thin-right" size={unitWidth*34} color="rgb(204,204,204)"/>
             </View>

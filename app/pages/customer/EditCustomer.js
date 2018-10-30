@@ -11,6 +11,7 @@ import { connect } from 'react-redux' // 引入connect函数
 import { GENDER, REMIND_SOURCE, CONTACT_TIME, INTENTION } from '../../config/StaticData'
 import { unitWidth } from '../../config/AdapterUtil'
 import * as customerAction from '../../actions/CustomerAction' // 导入action方法
+import * as httpAction from '../../actions/HttpAction' // 导入action方法
 import { TipPop, Header, List, } from '../../components'
 
 class EditCustomer extends Component {
@@ -19,28 +20,28 @@ class EditCustomer extends Component {
         super(props)
         this.state = {
             name: '', // 客户姓名
-            source: null, // 客户来源 1,员工推荐  2,老客户推荐  3,市场活动 4,电话销售 5,内部员工  6,销售人员自有资源  7,老客户续投  8,后台录入 9,其他销售方式
-            gender: null, // 称呼 性别 0,女 1，男
-            mobile: null, // 手机号
-            wechatId: null, // 微信号
-            email: null, // 邮箱
-            contactTime: null, // 可联系时间 1.工作日上班时间 2.工作日非上班时间18：00--22:00 3.节假日10:00--18:00
-            intention: null, // 客户意向 1非常有意向 2较有意向 3一般需继续了解 4可能性较小或尚未明确情况 5可能性极小或不可能
-            province: null, // 省
-            city: null, // 市
-            age: null, // 年龄
-            profession: null, // 职业
-            birthday: null, // 出生日期
-            birthdayRemindDate: null, // 生日提醒日期
+            source: '', // 客户来源 1,员工推荐  2,老客户推荐  3,市场活动 4,电话销售 5,内部员工  6,销售人员自有资源  7,老客户续投  8,后台录入 9,其他销售方式
+            gender: '', // 称呼 性别 0,女 1，男
+            mobile: '', // 手机号
+            wechatId: '', // 微信号
+            email: '', // 邮箱
+            contactTime: '', // 可联系时间 1.工作日上班时间 2.工作日非上班时间18：00--22:00 3.节假日10:00--18:00
+            intention: '', // 客户意向 1非常有意向 2较有意向 3一般需继续了解 4可能性较小或尚未明确情况 5可能性极小或不可能
+            province: '', // 省
+            city: '', // 市
+            age: '', // 年龄
+            profession: '', // 职业
+            birthday: '', // 出生日期
+            birthdayRemindDate: '', // 生日提醒日期
             hobby: '', // 兴趣爱好
             documentNoType: 1, // 证件类型 1身份证 2军官证 3签证
-            documentNo: null, // 证件号码
+            documentNo: '', // 证件号码
             address: '', // 联系地址
-            investAmount: null, // 可投资金额
+            investAmount: '', // 可投资金额
             bank: '', // 开户行
-            bankAcount: null, // 银行账户 
-            memo: null, // 备注
-            areaText: null,
+            bankAcount: '', // 银行账户 
+            memo: '', // 备注
+            areaText: '',
             blur: false,
         }
         this.props.getAreaTree()
@@ -88,6 +89,28 @@ class EditCustomer extends Component {
         this.props.navigation.goBack()
     }
     save() {
+        if(this.state.name === '') {
+            this.props.isError({msg:'请填写客户姓名',errorCode: 2})
+            return false;
+        }else if(this.state.gender === '') {
+            this.props.isError({msg:'请选择称呼',errorCode: 2})
+            return false;
+        }else if(this.state.contactTime === '') {
+            this.props.isError({msg:'请选择可联系时间',errorCode: 2})
+            return false;
+        }else if(this.state.source === '') {
+            this.props.isError({msg:'请选择客户来源',errorCode: 2})
+            return false;
+        }else if(this.state.mobile === '') {
+            this.props.isError({msg:'请填写手机号',errorCode: 2})
+            return false;
+        }else if(this.state.age === '') {
+            this.props.isError({msg:'请填写年龄',errorCode: 2})
+            return false;
+        }else if(this.state.investAmount === '') {
+            this.props.isError({msg:'请填写可投资金额',errorCode: 2})
+            return false;
+        }
         //input 失去焦点，键盘收回
         this.refs.input.blur()
         this.setState({
@@ -258,5 +281,6 @@ export default connect(
         getCustomerDetail: (data) => dispatch(customerAction.getCustomerDetail(data)),
         addCustomer: (data) => dispatch(customerAction.addCustomer(data)),
         getAreaTree: (data) => dispatch(customerAction.getAreaTree(data)),
+        isError: (data) => dispatch(httpAction.isError(data)),
     })
 )(EditCustomer)

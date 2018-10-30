@@ -27,7 +27,7 @@ class LoginMobile extends Component {
   }
   componentWillReceiveProps(nextProps) {
     if(nextProps.vcodeId && nextProps.mobile && nextProps.type === 'GOT_VCODE') {
-      this.refs.input.blur()
+      this.refs.input.blur();
       this.toHide()
       this.props.changeType()
       this.props.nextStatus('LoginVcode')
@@ -68,6 +68,7 @@ class LoginMobile extends Component {
       <Animated.View  style={[styles.container,{
         right:this.state.right,//将动画对象赋值给需要改变的样式属性
       }]}>
+      <TouchableOpacity activeOpacity={1} onPress={() => this.refs.input.blur()} >
         <View style={styles.textPos}>
           <View style={styles.yellowDot}></View>
           <Text style={styles.welcomeText}>欢迎,{'\n'}手机号码登录
@@ -98,6 +99,7 @@ class LoginMobile extends Component {
             </TouchableOpacity>
           </View> 
         </View>
+        </TouchableOpacity>
       </Animated.View>
     )
   }

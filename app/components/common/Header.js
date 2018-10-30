@@ -5,6 +5,7 @@ import {
     Image,
     StyleSheet,
     ImageBackground,
+    TouchableOpacity,
 } from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 
@@ -24,10 +25,10 @@ export default class Header extends Component {
         let current = null
         let content = <View style = { styles.content }>
                         {
-                            hasBack? <View style = { styles.back }>
+                            hasBack? <TouchableOpacity style = { styles.back } activeOpacity={1} onPress={() => this.props.back()}>
                                     <Icon name="ios-arrow-back" size={unitWidth*50} color="white"/>
-                                    <Text style = { styles.backTitle } onPress={() => this.props.back()}>{backTitle || '返回'}</Text> 
-                                </View> : null
+                                    <Text style = { styles.backTitle } >{backTitle || '返回'}</Text> 
+                            </TouchableOpacity>: null
                         }
                         <Text style = { styles.headerTitle }>{title}</Text>
                         {

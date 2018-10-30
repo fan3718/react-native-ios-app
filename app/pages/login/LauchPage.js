@@ -59,11 +59,14 @@ class LauchPage extends Component {
       fetch(request).then((res)=>{
           let data = JSON.parse(res._bodyInit);
           if(data['errorCode'] === 0) {
-              clearInterval(this.validNavigate)
-              this.props.navigation.navigate("BottomTabNavigator")
+            this.setState({
+              status: 'RecoSuccess'
+            })
+              // clearInterval(this.validNavigate)
+              // this.props.navigation.navigate("BottomTabNavigator")
           }else if(data['errorCode'] === 401) {
               this.setState({
-                status: 'LoginType'
+                status: 'RecoSuccess'
               })
           }
       })

@@ -3,6 +3,7 @@ import {
   View,
   Text,
   StyleSheet,
+  ScrollView,
 } from 'react-native'
 import { connect } from 'react-redux' // 引入connect函数
 
@@ -53,14 +54,14 @@ class ChildrenPerform extends Component {
                     </View>
                 </View>
             </View>
-            <View style={styles.section}>
+            <ScrollView style={styles.section}>
                 <View style={styles.sectionTitle}>
                     <Text style={styles.sectionText}>额度占比</Text>
                 </View>
                 <View style={styles.sectionContent}>
                     <SaleChart data = {perform}/>
                 </View>
-            </View>
+            </ScrollView>
             <LongBtn title={'查看业绩详情'} onPress={this.performDetail.bind(this)} />
             <TipPop navigation = {this.props.navigation} />
         </View>
