@@ -20,6 +20,8 @@ class PerformDetail extends Component {
             performList: {0:[],1:[]},
             limit: 20, // [可选] 每页条数
             activeTab: 0,
+            allPerformList:{0:[],1:[]},
+            couldFresh: true,
         }
         this.getList(0)
     }
@@ -41,6 +43,10 @@ class PerformDetail extends Component {
                 performList: {
                     ...this.state.performList,
                     [type]: this.state.performList[type].concat(list),
+                },
+                allPerformList: {
+                    ...this.state.allPerformList,
+                    [type]: this.state.allPerformList[type].concat(nextProps.performList.list),
                 }
             })
         }
@@ -85,7 +91,7 @@ class PerformDetail extends Component {
     }
 
     scrollEnd(type) {
-        if(this.state.totalPage[type] > this.state.page[type]) {
+        if(this.state.couldFresh && this.state.totalPage[type] > this.state.page[type]) {
             this.getList(type)
         }
     }
@@ -95,6 +101,24 @@ class PerformDetail extends Component {
         this.refs.topModel.setModalVisible()
     }
 
+    filterList(nameList) {
+        let newPerformList = []
+        let type = this.state.type[this.state.activeTab]
+        this.state.allPerformList[type].forEach(perform =>{
+            if(nameList.indexOf(perform.advisorName) > -1){
+                newPerformList.push(perform)
+            }
+        })
+        let list = this.getSectionData(newPerformList,type)
+        this.setState({
+            couldFresh: false,
+            performList: {
+                ...this.state.performList,
+                [type]: list
+            }
+        })
+        this.refs.topModel.setModalVisible()
+    }
     render() {
         const { advisorList } = this.props
         return(
@@ -126,7 +150,7 @@ class PerformDetail extends Component {
                     <PerformSection perform = {this.state.performList[1]} onEnd = {this.scrollEnd.bind(this,1)} />
                 </View>
             </ScrollableTabView>
-            <TopModal ref='topModel' data = {advisorList} />
+            <TopModal ref='topModel' data = {advisorList} filterList = {this.filterList.bind(this)}/>
             {/* <TipPop navigation = {this.props.navigation}></TipPop> */}
         </View>
         )

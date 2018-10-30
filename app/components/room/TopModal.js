@@ -61,12 +61,19 @@ export default class TopModal extends Component {
           ).start();
     }
 
-    transmitValue(value) {
-        this.props.onConfirm(value)
-    }
-
     search() {
-        
+        let list = [];
+        this.state.data.forEach(adviser => {
+            if(list.indexOf(adviser.name) > -1){
+                return false
+            }
+            if(this.state.allSelected) {
+                list.push(adviser.name)
+            }else if(this.state.selectedValue.indexOf(adviser.id) > -1) {
+                list.push(adviser.name)
+            }
+        });
+        this.props.filterList(list);
     }
 
     selectPerson(key) {
